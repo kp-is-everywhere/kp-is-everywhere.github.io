@@ -1,7 +1,7 @@
 .kp-highlight {
   padding: 2px 3px;
   display: inline;
-  background: #86e4e7;
+  background: #6edde1;
   color: #004a75;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -59,6 +59,7 @@
   width: auto;
   text-indent: 0 !important;
   text-align: left !important;
+  white-space: normal;
   margin: 0;
   margin-left: 60px;
   font-size: 13px !important;
