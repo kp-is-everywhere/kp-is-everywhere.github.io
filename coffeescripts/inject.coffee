@@ -1,7 +1,8 @@
+blocklist = /kptaipei.tw|docs.google.com|hackpad.com/
 chrome.extension.sendMessage {}, (response) ->
   readyStateCheckInterval = setInterval ->
     if document.readyState == "complete"
       clearInterval(readyStateCheckInterval)
-      return if window.location.host == 'kptaipei.tw'
+      return if (new RegExp(blocklist).test(window.location.host))
       new KpIsEverywhere()
   , 500

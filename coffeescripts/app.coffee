@@ -11,7 +11,9 @@ templates = [
   "先別管這個了，你聽過我提出的 <strong>{{title}}</strong> 嗎？？",
   "我覺得你可以幫我看看 <strong>{{title}}</strong> 這個政見怎麼樣？",
   "關於{{keyword}}，我的想法是 <strong>{{title}}</strong>",
-  "說到{{keyword}}，你知道 <strong>{{title}}</strong> 嗎？"
+  "關於{{keyword}}，我主張 <strong>{{title}}</strong>",
+  "說到{{keyword}}，你知道 <strong>{{title}}</strong> 嗎？",
+  "寶傑，關於 <strong>{{title}}</strong> ，你怎麼看？"
 ]
 
 xx = (t) ->
