@@ -84,7 +84,7 @@
           mutation = mutations[_i];
           $addedNodes = $(mutation.addedNodes);
           if (mutation.type === 'childList' && mutation.addedNodes.length > 0 && !(new RegExp(ignoreClass).test(mutation.target.classList))) {
-            $newNodes = $newNodes ? $newNodes.add($addedNodes) : $addedNodes;
+            $newNodes = $newNodes && $newNodes.add($addedNodes) || $addedNodes;
             hasNewNode = true;
           }
         }
@@ -146,10 +146,9 @@
       });
     };
 
-    KpIsEverywhere.prototype.findAll = function(scope) {
+    KpIsEverywhere.prototype.findAll = function() {
       var keyword, row, _i, _len, _ref, _results;
 
-      xx('搜尋中');
       _ref = this.rows;
       _results = [];
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
@@ -161,7 +160,8 @@
           _results1 = [];
           for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
             keyword = _ref1[_j];
-            _results1.push(this.findOne(keyword, row, scope));
+            xx("搜尋" + keyword + "中");
+            _results1.push(this.findOne(keyword, row));
           }
           return _results1;
         }).call(this));
@@ -169,12 +169,9 @@
       return _results;
     };
 
-    KpIsEverywhere.prototype.findOne = function(keyword, row, scope) {
+    KpIsEverywhere.prototype.findOne = function(keyword, row) {
       var html, notFound;
 
-      if (scope == null) {
-        scope = this.body;
-      }
       html = this.body.html();
       if (!html) {
         return;

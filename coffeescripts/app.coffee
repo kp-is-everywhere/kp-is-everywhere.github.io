@@ -1,10 +1,10 @@
-DEBUG = false
-key = '1TIhYo4RpGu7FGr0XZRIkVVx7E9kUzceXsNI8xPmDG9E'
+DEBUG                  = false
+key                    = '1TIhYo4RpGu7FGr0XZRIkVVx7E9kUzceXsNI8xPmDG9E'
 public_spreadsheet_url = "https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=#{key}&output=html"
-kp_url = (id) -> "http://kptaipei.tw/?page_id=#{id}"
-image_url = chrome.extension && chrome.extension.getURL('images/kp.jpg') || '/images/kp.jpg'
-ignoreClass = /kp-highlight|kp-wrapper|fbDock/
-DEBUG = true
+kp_url                 = (id) -> "http://kptaipei.tw/?page_id=#{id}"
+image_url              = chrome.extension && chrome.extension.getURL('images/kp.jpg') || '/images/kp.jpg'
+ignoreClass            = /kp-highlight|kp-wrapper|fbDock/
+DEBUG                  = true
 
 xx = (t) ->
   DEBUG && console.log t
@@ -66,7 +66,7 @@ class KpIsEverywhere
       for mutation in mutations
         $addedNodes = $(mutation.addedNodes)
         if mutation.type == 'childList' && mutation.addedNodes.length > 0 && !(new RegExp(ignoreClass).test(mutation.target.classList))
-          $newNodes = if $newNodes then $newNodes.add($addedNodes) else $addedNodes
+          $newNodes = $newNodes && $newNodes.add($addedNodes) || $addedNodes
           hasNewNode = true
 
       return unless hasNewNode
@@ -103,13 +103,13 @@ class KpIsEverywhere
             id: row.id
           @rows.push row
         @findAll()
-  findAll: (scope) =>
-    xx '搜尋中'
+  findAll: =>
     for row in @rows
       for keyword in row.keywords
-        @findOne keyword, row, scope
+        xx "搜尋#{keyword}中"
+        @findOne keyword, row
 
-  findOne: (keyword, row, scope = @body) ->
+  findOne: (keyword, row) ->
     html = @body.html()
     return if !html
     notFound = html.indexOf(keyword) < 0
