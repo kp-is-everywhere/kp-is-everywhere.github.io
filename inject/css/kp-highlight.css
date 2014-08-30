@@ -1,0 +1,94 @@
+.kp-highlight {
+  padding: 2px 3px;
+  display: inline;
+  background: #86e4e7;
+  color: #333333;
+  position: relative;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  -ms-border-radius: 2px;
+  -o-border-radius: 2px;
+  border-radius: 2px;
+}
+.kp-highlight .kp-wrapper {
+  display: none;
+  position: fixed;
+  width: 220px;
+  z-index: 9999;
+  margin: 0;
+  padding: 0;
+  padding-top: 30px;
+  margin-left: 5px;
+  margin-top: -5px;
+}
+.kp-highlight .kp-wrapper .kp-container {
+  position: relative;
+  max-width: 100%;
+  display: block;
+  padding: 10px;
+  font-size: 13px;
+  background: white;
+  min-height: 50px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
+  -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+.kp-highlight .kp-wrapper .kp-container a.kp-title {
+  font-weight: bold;
+  color: #3496b1;
+  letter-spacing: 0.1em;
+}
+.kp-highlight .kp-wrapper .kp-container img.kp-avatar {
+  width: 50px;
+  height: 50px;
+  float: left;
+  -webkit-border-radius: 50%;
+  -moz-border-radius: 50%;
+  -ms-border-radius: 50%;
+  -o-border-radius: 50%;
+  border-radius: 50%;
+}
+.kp-highlight .kp-wrapper .kp-container p.kp-text {
+  width: auto;
+  text-indent: 0 !important;
+  text-align: left !important;
+  margin: 0;
+  margin-left: 60px;
+  font-size: 13px !important;
+  line-height: 1.6em;
+}
+.kp-highlight .kp-wrapper .kp-container:before, .kp-highlight .kp-wrapper .kp-container:after {
+  content: "";
+  display: block;
+  position: absolute;
+}
+.kp-highlight .kp-wrapper .kp-container:before {
+  width: 8px;
+  height: 8px;
+  left: 10px;
+  top: -3px;
+  background: white;
+  -webkit-transform: rotate(45deg);
+  -moz-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  -o-transform: rotate(45deg);
+  transform: rotate(45deg);
+  -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+}
+.kp-highlight .kp-wrapper .kp-container:after {
+  left: 5px;
+  top: 0;
+  width: 20px;
+  height: 10px;
+  background: white;
+}
+.kp-highlight:hover .kp-wrapper {
+  display: block;
+}

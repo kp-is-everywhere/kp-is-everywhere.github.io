@@ -1,0 +1,68 @@
+@import 'compass/css3/border-radius'
+@import 'compass/css3/box-shadow'
+@import 'compass/css3/transform'
+
+.kp-highlight
+  padding: 2px 3px
+  display: inline
+  background: #86e4e7
+  color: #333
+  position: relative
+  +border-radius(2px)
+  .kp-wrapper
+    display: none
+    position: fixed
+    width: 220px
+    z-index: 9999
+    margin: 0
+    padding: 0
+    padding-top: 30px
+    margin-left: 5px
+    margin-top: -5px
+    .kp-container
+      position: relative
+      max-width: 100%
+      display: block
+      padding: 10px
+      font-size: 13px
+      background: #fff
+      min-height: 50px
+      +border-radius
+      +box-shadow( 0 0 3px rgba(#000, .5))
+      a.kp-title
+        font-weight: bold
+        color: #3496b1
+        letter-spacing: .1em
+      img.kp-avatar
+        width: 50px
+        height: 50px
+        float: left
+        +border-radius(50%)
+      p.kp-text
+        width: auto
+        text-indent: 0 !important
+        text-align: left !important
+        margin: 0
+        margin-left: 60px
+        font-size: 13px !important
+        line-height: 1.6em
+      &:before, &:after
+        content: ''
+        display: block
+        position: absolute
+      &:before
+        width: 8px
+        height: 8px
+        left: 10px
+        top: -3px
+        background: #fff
+        +transform( rotate(45deg) )
+        +box-shadow( 0 0 3px rgba(#000, .5))
+      &:after
+        left: 5px
+        top: 0
+        width: 20px
+        height: 10px
+        background: #fff
+  &:hover .kp-wrapper
+    display: block

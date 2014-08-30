@@ -1,0 +1,32 @@
+{
+  "name": "柯 P 關心你",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "柯 P 會盯著你的網頁看",
+  "homepage_url": "http://sliiice.com",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "default_locale": "en",
+  "web_accessible_resources": ["images/kp.jpg"],
+  "content_scripts": [
+    {
+      "matches": [
+        "http://*/*",
+        "https://*/*"
+      ],
+      "css": [
+        "inject/css/kp-highlight.css"
+      ],
+      "js": [
+        "vendor/jquery-2.1.1.min.js",
+        "vendor/tabletop.js",
+        "vendor/highlight.js",
+        "inject/js/app.js",
+        "inject/js/inject.js"
+      ]
+    }
+  ]
+}
