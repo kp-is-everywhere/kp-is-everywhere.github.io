@@ -30,7 +30,7 @@
     template = templates[Math.floor(Math.random() * templates.length)];
     template = template.replace('{{title}}', title);
     template = template.replace('{{keyword}}', keyword);
-    return "<div class='kp-wrapper'>\n  <div class='kp-container'>\n    <img class='kp-avatar' src=\"" + image_url + "\" alt=\"柯 P 關心您\">\n    <p class='kp-text'>" + template + "</p>\n  </div>\n</div>";
+    return "<div class='kp-wrapper'>\n  <div class='kp-container'>\n    <img class='kp-avatar' src=\"" + image_url + "\" alt=\"柯文哲關心您\">\n    <p class='kp-text'>" + template + "</p>\n  </div>\n</div>";
   };
 
   throttle = (function() {
@@ -48,14 +48,14 @@
   KpIsEverywhere = (function() {
     function KpIsEverywhere(options) {
       this.findAll = __bind(this.findAll, this);
-      this.pop = __bind(this.pop, this);
+      this.mousein = __bind(this.mousein, this);
       this._bindMutation = __bind(this._bindMutation, this);      this.body = $('body');
       this.load();
       this.bind();
     }
 
     KpIsEverywhere.prototype.bind = function() {
-      this.body.on('mouseover', '.kp-highlight', this.pop);
+      this.body.on('mouseover', '.kp-highlight', this.mousein);
       return setTimeout(this._bindMutation, 3000);
     };
 
@@ -76,15 +76,12 @@
         subtree: true
       };
       mutationObserver = new MutationObserver(function(mutations) {
-        var $addedNodes, $newNodes, hasNewNode, mutation, _i, _len;
+        var hasNewNode, mutation, _i, _len;
 
         hasNewNode = false;
-        $newNodes = null;
         for (_i = 0, _len = mutations.length; _i < _len; _i++) {
           mutation = mutations[_i];
-          $addedNodes = $(mutation.addedNodes);
           if (mutation.type === 'childList' && mutation.addedNodes.length > 0 && !(new RegExp(ignoreClass).test(mutation.target.classList))) {
-            $newNodes = $newNodes && $newNodes.add($addedNodes) || $addedNodes;
             hasNewNode = true;
           }
         }
@@ -96,20 +93,18 @@
       return mutationObserver.observe(target, config);
     };
 
-    KpIsEverywhere.prototype.pop = function(e) {
-      var $match, pos;
+    KpIsEverywhere.prototype.mousein = function(e) {
+      var $match;
 
       $match = $(e.currentTarget);
       if (!$match.data('kp-link-enabled')) {
         this._addLink($match);
       }
       if ($(e.target).hasClass('kp-highlight')) {
-        pos = $match[0].getBoundingClientRect();
-        $match.find('.kp-wrapper').css({
-          left: pos.left,
-          top: pos.top
+        return $match.find('.kp-wrapper').css({
+          left: e.clientX,
+          top: e.clientY
         });
-        return $match.toggleClass('right', $(window).width() - pos.right < 250);
       }
     };
 

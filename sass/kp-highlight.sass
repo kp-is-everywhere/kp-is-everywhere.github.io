@@ -7,7 +7,7 @@
   display: inline
   background: #86e4e7
   color: #004a75
-  position: relative
+
   +border-radius(2px)
   .kp-wrapper
     display: none
@@ -17,8 +17,9 @@
     margin: 0
     padding: 0
     padding-top: 30px
-    margin-left: 5px
-    margin-top: -5px
+    // margin-right: -165px
+    margin-left: -20px
+    margin-top: -15px
     .kp-container
       position: relative
       max-width: 100%
@@ -64,15 +65,5 @@
         width: 20px
         height: 10px
         background: #fff
-  &.right
-    .kp-wrapper
-      margin-left: -160px
-    .kp-container
-      &:before
-        left: auto
-        right: 10px
-      &:after
-        left: auto
-        right: 7px
   &:hover .kp-wrapper
-    display: block
+    display: inline-block

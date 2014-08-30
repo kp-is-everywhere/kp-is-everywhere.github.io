@@ -25,7 +25,7 @@ render = (title, keyword) ->
   """
     <div class='kp-wrapper'>
       <div class='kp-container'>
-        <img class='kp-avatar' src="#{image_url}" alt="柯 P 關心您">
+        <img class='kp-avatar' src="#{image_url}" alt="柯文哲關心您">
         <p class='kp-text'>#{template}</p>
       </div>
     </div>
@@ -44,7 +44,7 @@ class KpIsEverywhere
     @load()
     @bind()
   bind: ->
-    @body.on 'mouseover', '.kp-highlight', @pop
+    @body.on 'mouseover', '.kp-highlight', @mousein
     setTimeout(@_bindMutation, 3000)
   _bindMutation: =>
     ###
@@ -60,26 +60,21 @@ class KpIsEverywhere
 
     mutationObserver = new MutationObserver (mutations) =>
       hasNewNode = false
-      $newNodes = null
       for mutation in mutations
-        $addedNodes = $(mutation.addedNodes)
         if mutation.type == 'childList' && mutation.addedNodes.length > 0 && !(new RegExp(ignoreClass).test(mutation.target.classList))
-          $newNodes = $newNodes && $newNodes.add($addedNodes) || $addedNodes
           hasNewNode = true
 
       return unless hasNewNode
       throttle @findAll, 1000
 
     mutationObserver.observe(target, config)
-  pop: (e) =>
+  mousein: (e) =>
     $match = $(e.currentTarget)
     @_addLink($match) if !$match.data('kp-link-enabled')
     if $(e.target).hasClass('kp-highlight')
-      pos = $match[0].getBoundingClientRect()
       $match.find('.kp-wrapper').css
-        left: pos.left
-        top: pos.top
-      $match.toggleClass('right', $(window).width() - pos.right < 250)
+        left: e.clientX
+        top: e.clientY
   _addLink: ($match) ->
     $match.data('kp-link-enabled', true)
     title = $match.data('kp-title')

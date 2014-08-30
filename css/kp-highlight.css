@@ -3,7 +3,6 @@
   display: inline;
   background: #86e4e7;
   color: #004a75;
-  position: relative;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   -ms-border-radius: 2px;
@@ -18,8 +17,8 @@
   margin: 0;
   padding: 0;
   padding-top: 30px;
-  margin-left: 5px;
-  margin-top: -5px;
+  margin-left: -20px;
+  margin-top: -15px;
 }
 .kp-highlight .kp-wrapper .kp-container {
   position: relative;
@@ -89,17 +88,6 @@
   height: 10px;
   background: white;
 }
-.kp-highlight.right .kp-wrapper {
-  margin-left: -160px;
-}
-.kp-highlight.right .kp-container:before {
-  left: auto;
-  right: 10px;
-}
-.kp-highlight.right .kp-container:after {
-  left: auto;
-  right: 7px;
-}
 .kp-highlight:hover .kp-wrapper {
-  display: block;
+  display: inline-block;
 }
