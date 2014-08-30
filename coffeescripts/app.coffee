@@ -1,22 +1,23 @@
 DEBUG                  = false
-key                    = '1TIhYo4RpGu7FGr0XZRIkVVx7E9kUzceXsNI8xPmDG9E'
-public_spreadsheet_url = "https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=#{key}&output=html"
-kp_url                 = (id) -> "http://kptaipei.tw/?page_id=#{id}"
+# DEBUG                  = true
+MutationObserver       = window.MutationObserver || window.WebKitMutationObserver
+googleKey              = '1TIhYo4RpGu7FGr0XZRIkVVx7E9kUzceXsNI8xPmDG9E'
+public_spreadsheet_url = "https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=#{googleKey}&output=html"
 image_url              = chrome.extension && chrome.extension.getURL('images/kp.jpg') || '/images/kp.jpg'
 ignoreClass            = /kp-highlight|kp-wrapper|fbDock/
-DEBUG                  = true
+kp_url                 = (kpid) -> "http://kptaipei.tw/?page_id=#{kpid}"
+
+templates = [
+  "先別管這個了，你聽過我提出的 <strong>{{title}}</strong> 嗎？？",
+  "我覺得你可以幫我看看 <strong>{{title}}</strong> 這個政見怎麼樣？",
+  "關於{{keyword}}，我的想法是 <strong>{{title}}</strong>",
+  "說到{{keyword}}，你知道 <strong>{{title}}</strong> 嗎？"
+]
 
 xx = (t) ->
   DEBUG && console.log t
 
-templates = [
-  "先別管這個了，你聽過我提出的<strong>{{title}}</strong>嗎？？",
-  "我覺得你可以幫我看看<strong>{{title}}</strong>這個政見怎麼樣？",
-  "關於{{keyword}}，我的想法是<strong>{{title}}</strong>",
-  "說到{{keyword}}，你聽過<strong>{{title}}</strong>嗎？"
-]
-
-getTemplate = (title, keyword) ->
+render = (title, keyword) ->
   template = templates[Math.floor(Math.random()*templates.length)]
   template = template.replace('{{title}}', title)
   template = template.replace('{{keyword}}', keyword)
@@ -39,20 +40,17 @@ throttle = (() ->
 
 class KpIsEverywhere
   constructor: (options) ->
-    @prepare()
+    @body = $('body')
     @load()
     @bind()
-  prepare: ->
-    @body = $('body')
   bind: ->
-    @body.on 'mouseover', '.kp-highlight', @addLink
-
+    @body.on 'mouseover', '.kp-highlight', @pop
+    setTimeout(@_bindMutation, 3000)
+  _bindMutation: =>
     ###
       thanks g0v news helper!
       https://github.com/g0v/newshelper-extension
     ###
-
-    MutationObserver = window.MutationObserver || window.WebKitMutationObserver
     target = document
     config =
       attributes: true
@@ -70,25 +68,25 @@ class KpIsEverywhere
           hasNewNode = true
 
       return unless hasNewNode
-      throttle( =>
-        @findAll()
-      , 1000)
+      throttle @findAll, 1000
 
     mutationObserver.observe(target, config)
-  addLink: (e) =>
+  pop: (e) =>
     $match = $(e.currentTarget)
-    if !$match.data('kp-link-enabled')
-      $match.data('kp-link-enabled', true)
-      title = $match.data('kp-title')
-      id    = $match.data('kp-id')
-      $html = $(getTemplate(title, $match.text()))
-      $html.find('strong').wrap("<a class='kp-title' href='#{kp_url(id)}' target='_blank'>")
-      $match.append($html)
+    @_addLink($match) if !$match.data('kp-link-enabled')
     if $(e.target).hasClass('kp-highlight')
       pos = $match[0].getBoundingClientRect()
       $match.find('.kp-wrapper').css
         left: pos.left
         top: pos.top
+      $match.toggleClass('right', $(window).width() - pos.right < 250)
+  _addLink: ($match) ->
+    $match.data('kp-link-enabled', true)
+    title = $match.data('kp-title')
+    id    = $match.data('kp-id')
+    $html = $(render(title, $match.text()))
+    $html.find('strong').wrap("<a class='kp-title' href='#{kp_url(id)}' target='_blank'>")
+    $match.append($html)
   load: ->
     Tabletop.init
       key: public_spreadsheet_url,
@@ -107,9 +105,8 @@ class KpIsEverywhere
     for row in @rows
       for keyword in row.keywords
         xx "搜尋#{keyword}中"
-        @findOne keyword, row
-
-  findOne: (keyword, row) ->
+        @_findOne keyword, row
+  _findOne: (keyword, row) ->
     html = @body.html()
     return if !html
     notFound = html.indexOf(keyword) < 0

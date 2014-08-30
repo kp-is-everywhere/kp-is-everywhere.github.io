@@ -4,10 +4,10 @@ Slim::Engine.set_default_options :pretty => true, :disable_escape => true, :form
 
 
 http_path = "/"
-css_dir = "inject/css"
+css_dir = "css"
 sass_dir = "sass"
 images_dir = "images"
-javascripts_dir = "inject/js"
+javascripts_dir = "js"
 
 output_style = :expanded
 

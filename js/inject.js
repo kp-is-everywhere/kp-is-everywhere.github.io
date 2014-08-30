@@ -10,7 +10,7 @@
         }
         return new KpIsEverywhere();
       }
-    }, 10);
+    }, 500);
   });
 
 }).call(this);

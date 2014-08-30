@@ -2,7 +2,7 @@
   padding: 2px 3px;
   display: inline;
   background: #86e4e7;
-  color: #333333;
+  color: #004a75;
   position: relative;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
@@ -13,7 +13,7 @@
 .kp-highlight .kp-wrapper {
   display: none;
   position: fixed;
-  width: 220px;
+  width: 200px;
   z-index: 9999;
   margin: 0;
   padding: 0;
@@ -88,6 +88,17 @@
   width: 20px;
   height: 10px;
   background: white;
+}
+.kp-highlight.right .kp-wrapper {
+  margin-left: -160px;
+}
+.kp-highlight.right .kp-container:before {
+  left: auto;
+  right: 10px;
+}
+.kp-highlight.right .kp-container:after {
+  left: auto;
+  right: 7px;
 }
 .kp-highlight:hover .kp-wrapper {
   display: block;

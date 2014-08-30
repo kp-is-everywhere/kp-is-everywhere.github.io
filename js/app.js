@@ -1,30 +1,30 @@
 (function() {
-  var DEBUG, KpIsEverywhere, getTemplate, ignoreClass, image_url, key, kp_url, public_spreadsheet_url, templates, throttle, xx,
+  var DEBUG, KpIsEverywhere, MutationObserver, googleKey, ignoreClass, image_url, kp_url, public_spreadsheet_url, render, templates, throttle, xx,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   DEBUG = false;
 
-  key = '1TIhYo4RpGu7FGr0XZRIkVVx7E9kUzceXsNI8xPmDG9E';
+  MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
-  public_spreadsheet_url = "https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=" + key + "&output=html";
+  googleKey = '1TIhYo4RpGu7FGr0XZRIkVVx7E9kUzceXsNI8xPmDG9E';
 
-  kp_url = function(id) {
-    return "http://kptaipei.tw/?page_id=" + id;
-  };
+  public_spreadsheet_url = "https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=" + googleKey + "&output=html";
 
   image_url = chrome.extension && chrome.extension.getURL('images/kp.jpg') || '/images/kp.jpg';
 
   ignoreClass = /kp-highlight|kp-wrapper|fbDock/;
 
-  DEBUG = true;
+  kp_url = function(kpid) {
+    return "http://kptaipei.tw/?page_id=" + kpid;
+  };
+
+  templates = ["先別管這個了，你聽過我提出的 <strong>{{title}}</strong> 嗎？？", "我覺得你可以幫我看看 <strong>{{title}}</strong> 這個政見怎麼樣？", "關於{{keyword}}，我的想法是 <strong>{{title}}</strong>", "說到{{keyword}}，你知道 <strong>{{title}}</strong> 嗎？"];
 
   xx = function(t) {
     return DEBUG && console.log(t);
   };
 
-  templates = ["先別管這個了，你聽過我提出的<strong>{{title}}</strong>嗎？？", "我覺得你可以幫我看看<strong>{{title}}</strong>這個政見怎麼樣？", "關於{{keyword}}，我的想法是<strong>{{title}}</strong>", "說到{{keyword}}，你聽過<strong>{{title}}</strong>嗎？"];
-
-  getTemplate = function(title, keyword) {
+  render = function(title, keyword) {
     var template;
 
     template = templates[Math.floor(Math.random() * templates.length)];
@@ -48,26 +48,26 @@
   KpIsEverywhere = (function() {
     function KpIsEverywhere(options) {
       this.findAll = __bind(this.findAll, this);
-      this.addLink = __bind(this.addLink, this);      this.prepare();
+      this.pop = __bind(this.pop, this);
+      this._bindMutation = __bind(this._bindMutation, this);      this.body = $('body');
       this.load();
       this.bind();
     }
 
-    KpIsEverywhere.prototype.prepare = function() {
-      return this.body = $('body');
+    KpIsEverywhere.prototype.bind = function() {
+      this.body.on('mouseover', '.kp-highlight', this.pop);
+      return setTimeout(this._bindMutation, 3000);
     };
 
-    KpIsEverywhere.prototype.bind = function() {
-      var MutationObserver, config, mutationObserver, target,
-        _this = this;
-
-      this.body.on('mouseover', '.kp-highlight', this.addLink);
+    KpIsEverywhere.prototype._bindMutation = function() {
       /*
         thanks g0v news helper!
         https://github.com/g0v/newshelper-extension
       */
 
-      MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
+      var config, mutationObserver, target,
+        _this = this;
+
       target = document;
       config = {
         attributes: true,
@@ -91,32 +91,37 @@
         if (!hasNewNode) {
           return;
         }
-        return throttle(function() {
-          return _this.findAll();
-        }, 1000);
+        return throttle(_this.findAll, 1000);
       });
       return mutationObserver.observe(target, config);
     };
 
-    KpIsEverywhere.prototype.addLink = function(e) {
-      var $html, $match, id, pos, title;
+    KpIsEverywhere.prototype.pop = function(e) {
+      var $match, pos;
 
       $match = $(e.currentTarget);
       if (!$match.data('kp-link-enabled')) {
-        $match.data('kp-link-enabled', true);
-        title = $match.data('kp-title');
-        id = $match.data('kp-id');
-        $html = $(getTemplate(title, $match.text()));
-        $html.find('strong').wrap("<a class='kp-title' href='" + (kp_url(id)) + "' target='_blank'>");
-        $match.append($html);
+        this._addLink($match);
       }
       if ($(e.target).hasClass('kp-highlight')) {
         pos = $match[0].getBoundingClientRect();
-        return $match.find('.kp-wrapper').css({
+        $match.find('.kp-wrapper').css({
           left: pos.left,
           top: pos.top
         });
+        return $match.toggleClass('right', $(window).width() - pos.right < 250);
       }
+    };
+
+    KpIsEverywhere.prototype._addLink = function($match) {
+      var $html, id, title;
+
+      $match.data('kp-link-enabled', true);
+      title = $match.data('kp-title');
+      id = $match.data('kp-id');
+      $html = $(render(title, $match.text()));
+      $html.find('strong').wrap("<a class='kp-title' href='" + (kp_url(id)) + "' target='_blank'>");
+      return $match.append($html);
     };
 
     KpIsEverywhere.prototype.load = function() {
@@ -161,7 +166,7 @@
           for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
             keyword = _ref1[_j];
             xx("搜尋" + keyword + "中");
-            _results1.push(this.findOne(keyword, row));
+            _results1.push(this._findOne(keyword, row));
           }
           return _results1;
         }).call(this));
@@ -169,7 +174,7 @@
       return _results;
     };
 
-    KpIsEverywhere.prototype.findOne = function(keyword, row) {
+    KpIsEverywhere.prototype._findOne = function(keyword, row) {
       var html, notFound;
 
       html = this.body.html();

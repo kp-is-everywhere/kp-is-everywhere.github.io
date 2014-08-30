@@ -2,19 +2,23 @@ doctype 5
 html lang="zh-TW"
   head
     title test page
-    = stylesheet_link_tag '/inject/css/kp-highlight.css'
+    = stylesheet_link_tag '/css/kp-highlight.css'
   body
     .wrapper
       p
         |
-          市場外食台北市長參選人柯文哲繼上週推出
+          市場外食台北市長參選人柯文哲繼上週推出的「解救血汗計程車」政策說明影片，今（8/26）日再針對交通相關問題，推出「公車路線大調整」政見，主張未來的公共運輸服務應當以捷運為骨幹，在這個基礎之上去調整公車路線。
+
+          柯文哲指出，目前台北市公車有306線，每天載客160萬人次以上，幾乎和捷運相等，公車是很重要的交通工具，但現況卻是乘客抱怨、公車司機辛苦、公車業者覺得委屈，而政府花錢又民眾不滿意。
+
+          談及乘客抱怨的原因，柯文哲解釋，因為公車路線多，不知道要搭哪一線，公車路線圖複雜又難懂，部分乘客不好意思問司機，不問又搭錯車，有些年紀大的長輩甚至不會搭公車；至於司機為什麼覺得辛苦，柯文哲分析，有些公車路線里程太長，像是235有71站、307有62站，來回一趟要四小時，公車司機坐在狹小的駕駛空間，開車時間長、工作條件差，對生理和心理都是很大的負擔；再是公車業者的無奈，柯文哲說，捷運路網擴大之下，公車營收受到擠壓在，又因路線設計不良、里程太長、空車率太高，造成成本居高不下，公車業者想要提高票價，但票價訂定需要市府的配合，也缺乏了積極改善服務的誘因和動力。
 
   = livereload_js
   = javascript_include_tag \
     '/vendor/jquery-2.1.1.min.js', \
     '/vendor/tabletop.js', \
     '/vendor/highlight.js', \
-    '/inject/js/app.js'
+    '/js/app.js'
 
   sass:
     body
@@ -26,5 +30,5 @@ html lang="zh-TW"
     p
       line-height: 1.5em
       width: 600px
-  / coffee:
-  /   new KpIsEverywhere()
+  coffee:
+    new KpIsEverywhere()
