@@ -1,8 +1,10 @@
+DEBUG = false
 key = '1TIhYo4RpGu7FGr0XZRIkVVx7E9kUzceXsNI8xPmDG9E'
 public_spreadsheet_url = "https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=#{key}&output=html"
 kp_url = (id) -> "http://kptaipei.tw/?page_id=#{id}"
 image_url = chrome.extension && chrome.extension.getURL('images/kp.jpg') || '/images/kp.jpg'
-DEBUG = false
+ignoreClass = /kp-highlight|kp-wrapper|fbDock/
+DEBUG = true
 
 xx = (t) ->
   DEBUG && console.log t
@@ -49,8 +51,8 @@ class KpIsEverywhere
       thanks g0v news helper!
       https://github.com/g0v/newshelper-extension
     ###
-    MutationObserver = window.MutationObserver || window.WebKitMutationObserver
 
+    MutationObserver = window.MutationObserver || window.WebKitMutationObserver
     target = document
     config =
       attributes: true
@@ -60,14 +62,16 @@ class KpIsEverywhere
 
     mutationObserver = new MutationObserver (mutations) =>
       hasNewNode = false
-      mutations.forEach (mutation, idx)->
-        if mutation.type == 'childList' && mutation.addedNodes.length > 0 && !$(mutation.addedNodes).hasClass('kp-wrapper')
+      $newNodes = null
+      for mutation in mutations
+        $addedNodes = $(mutation.addedNodes)
+        if mutation.type == 'childList' && mutation.addedNodes.length > 0 && !(new RegExp(ignoreClass).test(mutation.target.classList))
+          $newNodes = if $newNodes then $newNodes.add($addedNodes) else $addedNodes
           hasNewNode = true
 
       return unless hasNewNode
       throttle( =>
         @findAll()
-        xx 'findall'
       , 1000)
 
     mutationObserver.observe(target, config)
@@ -90,7 +94,6 @@ class KpIsEverywhere
       key: public_spreadsheet_url,
       simpleSheet: true
       callback: (rows) =>
-        xx rows
         @rows = []
         for row in rows
           continue if !row.keywords
@@ -99,20 +102,22 @@ class KpIsEverywhere
             keywords: row.keywords.split('、')
             id: row.id
           @rows.push row
-
         @findAll()
-  findAll: =>
+  findAll: (scope) =>
     xx '搜尋中'
     for row in @rows
       for keyword in row.keywords
-        @_find keyword, row
+        @findOne keyword, row, scope
 
-  _find: (keyword, row) ->
+  findOne: (keyword, row, scope = @body) ->
     html = @body.html()
+    return if !html
     notFound = html.indexOf(keyword) < 0
-    return if notFound
+    if notFound
+      xx '搜尋結束'
+      return
     xx "發現關鍵字：#{keyword}"
-    @body.highlight keyword, {classname: 'kp-highlight', tag: 'div', ignore: 'kp-wrapper'}, (div) ->
+    @body.highlight keyword, {classname: 'kp-highlight', tag: 'div', ignoreClass: ignoreClass }, (div) ->
       $(div).attr
         'data-kp-id': row.id
         'data-kp-title': row.title

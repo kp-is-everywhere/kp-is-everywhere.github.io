@@ -1,6 +1,8 @@
 (function() {
-  var DEBUG, KpIsEverywhere, getTemplate, image_url, key, kp_url, public_spreadsheet_url, templates, throttle, xx,
+  var DEBUG, KpIsEverywhere, getTemplate, ignoreClass, image_url, key, kp_url, public_spreadsheet_url, templates, throttle, xx,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
+
+  DEBUG = false;
 
   key = '1TIhYo4RpGu7FGr0XZRIkVVx7E9kUzceXsNI8xPmDG9E';
 
@@ -12,7 +14,9 @@
 
   image_url = chrome.extension && chrome.extension.getURL('images/kp.jpg') || '/images/kp.jpg';
 
-  DEBUG = false;
+  ignoreClass = /kp-highlight|kp-wrapper|fbDock/;
+
+  DEBUG = true;
 
   xx = function(t) {
     return DEBUG && console.log(t);
@@ -72,20 +76,23 @@
         subtree: true
       };
       mutationObserver = new MutationObserver(function(mutations) {
-        var hasNewNode;
+        var $addedNodes, $newNodes, hasNewNode, mutation, _i, _len;
 
         hasNewNode = false;
-        mutations.forEach(function(mutation, idx) {
-          if (mutation.type === 'childList' && mutation.addedNodes.length > 0 && !$(mutation.addedNodes).hasClass('kp-wrapper')) {
-            return hasNewNode = true;
+        $newNodes = null;
+        for (_i = 0, _len = mutations.length; _i < _len; _i++) {
+          mutation = mutations[_i];
+          $addedNodes = $(mutation.addedNodes);
+          if (mutation.type === 'childList' && mutation.addedNodes.length > 0 && !(new RegExp(ignoreClass).test(mutation.target.classList))) {
+            $newNodes = $newNodes ? $newNodes.add($addedNodes) : $addedNodes;
+            hasNewNode = true;
           }
-        });
+        }
         if (!hasNewNode) {
           return;
         }
         return throttle(function() {
-          _this.findAll();
-          return xx('findall');
+          return _this.findAll();
         }, 1000);
       });
       return mutationObserver.observe(target, config);
@@ -121,7 +128,6 @@
         callback: function(rows) {
           var row, _i, _len;
 
-          xx(rows);
           _this.rows = [];
           for (_i = 0, _len = rows.length; _i < _len; _i++) {
             row = rows[_i];
@@ -140,7 +146,7 @@
       });
     };
 
-    KpIsEverywhere.prototype.findAll = function() {
+    KpIsEverywhere.prototype.findAll = function(scope) {
       var keyword, row, _i, _len, _ref, _results;
 
       xx('搜尋中');
@@ -155,7 +161,7 @@
           _results1 = [];
           for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
             keyword = _ref1[_j];
-            _results1.push(this._find(keyword, row));
+            _results1.push(this.findOne(keyword, row, scope));
           }
           return _results1;
         }).call(this));
@@ -163,19 +169,26 @@
       return _results;
     };
 
-    KpIsEverywhere.prototype._find = function(keyword, row) {
+    KpIsEverywhere.prototype.findOne = function(keyword, row, scope) {
       var html, notFound;
 
+      if (scope == null) {
+        scope = this.body;
+      }
       html = this.body.html();
+      if (!html) {
+        return;
+      }
       notFound = html.indexOf(keyword) < 0;
       if (notFound) {
+        xx('搜尋結束');
         return;
       }
       xx("發現關鍵字：" + keyword);
       return this.body.highlight(keyword, {
         classname: 'kp-highlight',
         tag: 'div',
-        ignore: 'kp-wrapper'
+        ignoreClass: ignoreClass
       }, function(div) {
         return $(div).attr({
           'data-kp-id': row.id,
