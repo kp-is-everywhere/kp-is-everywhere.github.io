@@ -103,14 +103,29 @@ h1 {
 }
 
 .container {
-  width: 70%;
   padding: 1.86667em;
+  width: 90%;
+}
+.container p {
+  text-align: justify;
+}
+.container br {
+  display: none;
+}
+@media (min-width: 801px) {
+  .container {
+    width: 70%;
+  }
+  .container br {
+    display: block;
+  }
 }
 
 .header {
   height: 450px;
-  background: url("images/header.png") #333333;
+  background: url("images/header.png") #333333 center top;
   position: relative;
+  text-align: center;
   -webkit-background-size: 1093px 517px;
   -moz-background-size: 1093px 517px;
   -o-background-size: 1093px 517px;
@@ -127,8 +142,15 @@ h1 {
 .header .container {
   background: rgba(108, 208, 196, 0.8);
   color: white;
-  position: relative;
-  top: 160px;
+  text-align: left;
+  display: inline-block;
+  vertical-align: middle;
+}
+.header:before {
+  content: "";
+  display: inline-block;
+  height: 100%;
+  vertical-align: middle;
 }
 .header:after {
   content: "";
@@ -186,9 +208,11 @@ h1 {
   font-size: 0.86667em;
   line-height: 2.15385em;
 }
-.footer li {
-  display: inline-block;
-  margin: 0 1.86667em;
+@media (min-width: 801px) {
+  .footer li {
+    display: inline-block;
+    margin: 0 1.86667em;
+  }
 }
 .footer a {
   color: white;
@@ -207,6 +231,7 @@ h1 {
   box-shadow: inset 0 10px 10px -10px rgba(0, 0, 0, 0.5);
 }
 .footer .copyright {
+  text-align: center;
   color: rgba(255, 255, 255, 0.3);
   font-size: 0.73333em;
   line-height: 2.54545em;

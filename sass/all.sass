@@ -52,13 +52,23 @@ h1
   font-weight: bold
   +adjust-font-size-to(20px, 1.5)
 .container
-  width: 70%
   padding: rhythm(1)
+  width: 90%
+  p
+    text-align: justify
+  br
+    display: none
+  +ns
+    width: 70%
+    br
+      display: block
 
 .header
-  height: 900px * .5
-  background: url('images/header.png') #333
+  height: 450px
+  background: url('images/header.png') #333 center top
   position: relative
+  text-align: center
+
   +re
     background-image: url('images/header@2x.png')
   +background-size(1093px 517px)
@@ -67,8 +77,14 @@ h1
   .container
     background: rgba($header-bg-color, .8)
     color: #fff
-    position: relative
-    top: 160px
+    text-align: left
+    display: inline-block
+    vertical-align: middle
+  &:before
+    content: ''
+    display: inline-block
+    height: 100%
+    vertical-align: middle
   &:after
     content: ''
     display: block
@@ -111,8 +127,9 @@ h1
   +text-shadow(0 0 2px rgba(#000, .3))
   +adjust-font-size-to(13px, 1)
   li
-    display: inline-block
-    margin: 0 rhythm(1)
+    +ns
+      display: inline-block
+      margin: 0 rhythm(1)
   a
     color: $bg-color
     padding: 5px
@@ -126,5 +143,6 @@ h1
     left: 0
     +box-shadow(inset 0 10px 10px -10px rgba(#000, .5))
   .copyright
+    text-align: center
     color: rgba($bg-color, .3)
     +adjust-font-size-to(11px)
