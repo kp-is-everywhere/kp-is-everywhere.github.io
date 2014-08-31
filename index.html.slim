@@ -51,10 +51,19 @@ html lang="zh-TW"
             ol
               li
                 h3 下載
-                p 目前 kpkey.js 相依於 <a href="http://jquery.com" target="_blank">jquery.js</a>, <a href="https://github.com/jsoma/tabletop" target="_blank">tabletop.js</a> 和 <a href="https://github.com/tankchintan/highlight-js" target="_blank">highlight.js</a>，所以請下載這個壓縮檔
+                p kpkey.js 目前相依於 <a href="http://jquery.com" target="_blank">jquery.js</a>, <a href="https://github.com/jsoma/tabletop" target="_blank">tabletop.js</a> 和 <a href="https://github.com/tankchintan/highlight-js" target="_blank">highlight.js</a>，所以請下載這個壓縮檔
               li
-                h3 加入頁面
-                p 把它們和 jquery 加到 html 的 body 底下
+                h3 加入 css 到頁面
+                p 放在 <code>&lt;head&gt;&lt;/head&gt;</code> 裡
+                pre
+                  code
+                    |
+                      &lt;head&gt;
+                        &lt;link href="/css/kp-highlight.css" media="screen" rel="stylesheet" type="text/css" /&gt;
+                      &lt;/head&gt;
+              li
+                h3 加入 js 到頁面
+                p 把它們和 jquery 加到的 <code>&lt;/body&gt;</code> 之後
                 pre
                   code
                     |
@@ -66,12 +75,17 @@ html lang="zh-TW"
                           $('.example').kpkey();
                           // .example 是要搜尋的元素，也可以用 $('body') 做全頁搜尋
                       &lt;/script&gt;
+              li
+                h3 也不能忘記柯 P 的照片（意思就是你也可以換成你喜歡的啦）
+                p 把 kp.jpg 放到和 js 同層的 images 資料夾裡
+
               li: h3 have fun!
       footer.footer
         .container
           ul.links
             - links.each do |link|
               li.link: a target="_blank" href=link[1] =link[0]
+          p &copy; 2014 19
 
 
   = livereload_js
@@ -83,4 +97,3 @@ html lang="zh-TW"
     '/js/kpkey.js'
   coffee:
     $('.example').kpkey()
-    $('.affix').affix()

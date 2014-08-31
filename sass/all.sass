@@ -1,5 +1,6 @@
 @import 'compass/reset'
 @import 'compass/css3/box-shadow'
+@import 'compass/css3/text-shadow'
 @import 'compass/css3/border-radius'
 @import 'compass/css3/background-size'
 @import 'compass/layout/grid-background'
@@ -16,9 +17,11 @@ $grid-background-baseline-height: $base-line-height
 +establish-baseline
 
 $bg-color: #fff
+$header-bg-color: #6cd0c4
+$footer-bg-color: #6595a3
 $text-color: #555
-$link-color: #4be4e5
-$code-bg-color: #fdf0a3
+$link-color: #55c0cf
+$code-bg-color: #e6fded
 $link-hover-color: darken($link-color, 8)
 
 body
@@ -27,23 +30,27 @@ body
   font-family: helvetica, sens-serif
 strong
   font-weight: bold
+a
+  color: $link-color
 
 pre
   background: none
-  padding: 0 5px
+  padding: 15px
   display: block
   background: $code-bg-color
+  color: lighten($text-color, 5)
 
 code
   padding: 2px 4px
   margin: 0 2px
   background: $code-bg-color
-  color: $text-color
+  color: lighten($text-color, 5)
 
 section + section
   +leader(1)
 h1
   font-weight: bold
+  +text-shadow
   +adjust-font-size-to(20px, 1.5)
 .container
   width: 70%
@@ -51,7 +58,7 @@ h1
 
 .header
   height: 900px * .5
-  background: url('images/header.png') #cbcbcb
+  background: url('images/header.png') #333
   position: relative
   +re
     background-image: url('images/header@2x.png')
@@ -59,7 +66,7 @@ h1
   a
     color: $text-color
   .container
-    background: rgba(#009ca3, .8)
+    background: rgba($header-bg-color, .8)
     color: #fff
     position: relative
     top: 160px
@@ -98,10 +105,23 @@ h1
 
 .footer
   text-align: center
-  background: darken($text-color, 10)
-  color: $text-color
+  background: $footer-bg-color
+  color: $bg-color
+  padding: rhythm(1)
+  position: relative
   +adjust-font-size-to(13px, 1)
   li
     display: inline-block
     margin: 0 rhythm(1)
-
+  a
+    color: $bg-color
+    padding: 5px
+  &:after
+    content: ''
+    display: block
+    position: absolute
+    height: 20px
+    width: 100%
+    top: 0
+    left: 0
+    +box-shadow(inset 0 10px 10px -10px rgba(#000, .5))
