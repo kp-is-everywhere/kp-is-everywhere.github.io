@@ -20,10 +20,10 @@
         "css/kp-highlight.css"
       ],
       "js": [
-        "vendor/jquery-2.1.1.min.js",
-        "vendor/tabletop.js",
-        "vendor/highlight.js",
-        "js/app.js",
+        "js/jquery-2.1.1.min.js",
+        "js/tabletop.js",
+        "js/highlight.js",
+        "js/kpkey.js",
         "js/inject.js"
       ]
     }
