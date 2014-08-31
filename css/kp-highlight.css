@@ -19,6 +19,9 @@
   padding-top: 30px !important;
   margin-left: -20px !important;
   margin-top: -15px !important;
+  -webkit-box-sizing: border-box !important;
+  -moz-box-sizing: border-box !important;
+  box-sizing: border-box !important;
 }
 .kp-highlight .kp-wrapper .kp-container {
   position: relative !important;
@@ -36,6 +39,9 @@
   -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
+  -webkit-box-sizing: border-box !important;
+  -moz-box-sizing: border-box !important;
+  box-sizing: border-box !important;
 }
 .kp-highlight .kp-wrapper .kp-container a.kp-title {
   width: auto !important;

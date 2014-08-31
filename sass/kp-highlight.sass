@@ -1,5 +1,6 @@
 @import 'compass/css3/border-radius'
 @import 'compass/css3/box-shadow'
+@import 'compass/css3/box-sizing'
 @import 'compass/css3/transform'
 
 .kp-highlight
@@ -19,6 +20,7 @@
     padding-top: 30px !important
     margin-left: -20px !important
     margin-top: -15px !important
+    +box-sizing(border-box !important)
     .kp-container
       position: relative !important
       max-width: 100% !important
@@ -29,6 +31,7 @@
       background: #fff
       +border-radius
       +box-shadow( 0 0 3px rgba(#000, .5))
+      +box-sizing(border-box !important)
       a.kp-title
         width: auto !important
         height: auto !important
