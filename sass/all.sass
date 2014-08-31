@@ -18,7 +18,7 @@ $grid-background-baseline-height: $base-line-height
 
 $bg-color: #fff
 $header-bg-color: #6cd0c4
-$footer-bg-color: #6595a3
+$footer-bg-color: #6b8989
 $text-color: #555
 $link-color: #55c0cf
 $code-bg-color: #e6fded
@@ -50,7 +50,7 @@ section + section
   +leader(1)
 h1
   font-weight: bold
-  +text-shadow
+  +text-shadow(0 0 2px rgba(#000, .3))
   +adjust-font-size-to(20px, 1.5)
 .container
   width: 70%
@@ -109,6 +109,7 @@ h1
   color: $bg-color
   padding: rhythm(1)
   position: relative
+  +text-shadow(0 0 2px rgba(#000, .3))
   +adjust-font-size-to(13px, 1)
   li
     display: inline-block
@@ -125,3 +126,6 @@ h1
     top: 0
     left: 0
     +box-shadow(inset 0 10px 10px -10px rgba(#000, .5))
+  .copyright
+    color: rgba($bg-color, .3)
+    +adjust-font-size-to(11px)

@@ -98,7 +98,7 @@ section + section {
 
 h1 {
   font-weight: bold;
-  text-shadow: 0px 0px 1px #aaaaaa;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
   font-size: 1.33333em;
   line-height: 2.1em;
 }
@@ -179,10 +179,11 @@ h1 {
 
 .footer {
   text-align: center;
-  background: #6595a3;
+  background: #6b8989;
   color: white;
   padding: 1.86667em;
   position: relative;
+  text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
   font-size: 0.86667em;
   line-height: 2.15385em;
 }
@@ -205,4 +206,9 @@ h1 {
   -webkit-box-shadow: inset 0 10px 10px -10px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: inset 0 10px 10px -10px rgba(0, 0, 0, 0.5);
   box-shadow: inset 0 10px 10px -10px rgba(0, 0, 0, 0.5);
+}
+.footer .copyright {
+  color: rgba(255, 255, 255, 0.3);
+  font-size: 0.73333em;
+  line-height: 2.54545em;
 }
