@@ -42,18 +42,19 @@ throttle = (() ->
 
 class KpIsEverywhere
   constructor: (options) ->
-    @body = $('body')
+    @scope = options && options.scope || $('body')
+    @observe = options && options.scope[0] || document
     @load()
     @bind()
   bind: ->
-    @body.on 'mouseover', '.kp-highlight', @mousein
+    @scope.on 'mouseover', '.kp-highlight', @mousein
     setTimeout(@_bindMutation, 3000)
   _bindMutation: =>
     ###
       thanks g0v news helper!
       https://github.com/g0v/newshelper-extension
     ###
-    target = document
+    target = @observe
     config =
       attributes: true
       childList: true
@@ -78,6 +79,7 @@ class KpIsEverywhere
         left: e.clientX
         top: e.clientY
   _addLink: ($match) ->
+    return if $match.find('.kp-wrapper').length # to avoid duplicated dom with plugin
     $match.data('kp-link-enabled', true)
     title = $match.data('kp-title')
     id    = $match.data('kp-id')
@@ -104,16 +106,24 @@ class KpIsEverywhere
         xx "搜尋#{keyword}中"
         @_findOne keyword, row
   _findOne: (keyword, row) ->
-    html = @body.html()
+    html = @scope.html()
     return if !html
     notFound = html.indexOf(keyword) < 0
     if notFound
       xx '搜尋結束'
       return
     xx "發現關鍵字：#{keyword}"
-    @body.highlight keyword, {classname: 'kp-highlight', tag: 'div', ignoreClass: ignoreClass }, (div) ->
+    @scope.highlight keyword, {classname: 'kp-highlight', tag: 'div', ignoreClass: ignoreClass }, (div) ->
       $(div).attr
         'data-kp-id': row.id
         'data-kp-title': row.title
 
-window.KpIsEverywhere = KpIsEverywhere
+$.fn.kpkey = ->
+  $(@).each (i, scope) ->
+    $scope = $(scope)
+    if !$scope.data('kpkey')
+      kpkey = new KpIsEverywhere({ scope: $scope })
+      $scope.data('kpkey', kpkey)
+  @
+
+window.KpIsEverywhere = KpIsEverywhere if chrome.extension

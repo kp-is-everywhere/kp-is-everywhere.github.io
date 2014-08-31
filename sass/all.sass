@@ -1,0 +1,91 @@
+@import 'compass/reset'
+@import 'compass/css3/box-shadow'
+@import 'compass/css3/background-size'
+@import 'compass/layout/grid-background'
+@import 'compass/typography/vertical_rhythm'
+
+@import 'mixins'
+
+$base-font-size: 15px
+$base-line-height: 28px
+$rhythm-unit: 'px'
+
+$grid-background-baseline-height: $base-line-height
+
++establish-baseline
+
+$bg-color: #fff
+$text-color: #555
+$link-color: #4be4e5
+$link-hover-color: darken($link-color, 8)
+
+body
+  background: $bg-color
+  color: $text-color
+  font-family: helvetica, sens-serif
+
+strong
+  font-weight: bold
+
+code
+  padding: 2px 4px
+  margin: 0 2px
+  background: $link-color
+a
+  text-decoration: none
+  color: $link-color
+  &:hover
+    color: $link-hover-color
+h1
+  font-weight: bold
+  +adjust-font-size-to(20px, 1.5)
+.container
+  width: 70%
+  margin: 0 auto
+  padding: rhythm(1)
+.header
+  height: 900px * .5
+  background: url('images/header.png') #cbcbcb
+  position: relative
+  +re
+    background-image: url('images/header@2x.png')
+  +background-size(1093px 517px)
+  .container
+    background: #333
+    color: #fff
+    position: relative
+    top: 160px
+  &:after
+    content: ''
+    display: block
+    position: absolute
+    height: 20px
+    width: 100%
+    bottom: 0
+    left: 0
+    +box-shadow(inset 0 -10px 15px -8px rgba(#000, .5))
+.main
+  .info
+    +trailer(1)
+
+  .example
+    // padding: rhythm(1)
+    img
+      float: left
+      height: auto
+    .comment
+      opacity: .5
+      font-style: italic
+    blockquote
+      margin-left: 215px
+      text-align: justify
+
+.footer
+  text-align: center
+  background: darken($text-color, 10)
+  color: $text-color
+  +adjust-font-size-to(13px, 1)
+  li
+    display: inline-block
+    margin: 0 rhythm(1)
+

@@ -1,0 +1,31 @@
+=mq($point)
+  @if $point == retina
+    @media screen and (-webkit-min-device-pixel-ratio: 2), screen and (max--moz-device-pixel-ratio: 2)
+      @content
+  @if $point == tablet
+    @media (min-width: 481px) and (max-width: 1024px)
+      @content
+  @else if $point == desktop
+    @media (min-width: 1025px)
+      @content
+  @else if $point == small
+    @media (max-width: 480px)
+      @content
+  @else if $point == not-small
+    @media (min-width: 481px)
+      @content
+=tb
+  +mq(tablet)
+    @content
+=dt
+  +mq(desktop)
+    @content
+=ns
+  +mq(not-small)
+    @content
+=sm
+  +mq(small)
+    @content
+=re
+  +mq(retina)
+    @content

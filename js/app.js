@@ -49,13 +49,14 @@
     function KpIsEverywhere(options) {
       this.findAll = __bind(this.findAll, this);
       this.mousein = __bind(this.mousein, this);
-      this._bindMutation = __bind(this._bindMutation, this);      this.body = $('body');
+      this._bindMutation = __bind(this._bindMutation, this);      this.scope = options && options.scope || $('body');
+      this.observe = options && options.scope[0] || document;
       this.load();
       this.bind();
     }
 
     KpIsEverywhere.prototype.bind = function() {
-      this.body.on('mouseover', '.kp-highlight', this.mousein);
+      this.scope.on('mouseover', '.kp-highlight', this.mousein);
       return setTimeout(this._bindMutation, 3000);
     };
 
@@ -68,7 +69,7 @@
       var config, mutationObserver, target,
         _this = this;
 
-      target = document;
+      target = this.observe;
       config = {
         attributes: true,
         childList: true,
@@ -111,6 +112,9 @@
     KpIsEverywhere.prototype._addLink = function($match) {
       var $html, id, title;
 
+      if ($match.find('.kp-wrapper').length) {
+        return;
+      }
       $match.data('kp-link-enabled', true);
       title = $match.data('kp-title');
       id = $match.data('kp-id');
@@ -172,7 +176,7 @@
     KpIsEverywhere.prototype._findOne = function(keyword, row) {
       var html, notFound;
 
-      html = this.body.html();
+      html = this.scope.html();
       if (!html) {
         return;
       }
@@ -182,7 +186,7 @@
         return;
       }
       xx("發現關鍵字：" + keyword);
-      return this.body.highlight(keyword, {
+      return this.scope.highlight(keyword, {
         classname: 'kp-highlight',
         tag: 'div',
         ignoreClass: ignoreClass
@@ -198,6 +202,23 @@
 
   })();
 
-  window.KpIsEverywhere = KpIsEverywhere;
+  $.fn.kpkey = function() {
+    $(this).each(function(i, scope) {
+      var $scope, kpkey;
+
+      $scope = $(scope);
+      if (!$scope.data('kpkey')) {
+        kpkey = new KpIsEverywhere({
+          scope: $scope
+        });
+        return $scope.data('kpkey', kpkey);
+      }
+    });
+    return this;
+  };
+
+  if (chrome.extension) {
+    window.KpIsEverywhere = KpIsEverywhere;
+  }
 
 }).call(this);

@@ -1,0 +1,161 @@
+html, body, div, span, applet, object, iframe,
+h1, h2, h3, h4, h5, h6, p, blockquote, pre,
+a, abbr, acronym, address, big, cite, code,
+del, dfn, em, img, ins, kbd, q, s, samp,
+small, strike, strong, sub, sup, tt, var,
+b, u, i, center,
+dl, dt, dd, ol, ul, li,
+fieldset, form, label, legend,
+table, caption, tbody, tfoot, thead, tr, th, td,
+article, aside, canvas, details, embed,
+figure, figcaption, footer, header, hgroup,
+menu, nav, output, ruby, section, summary,
+time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  font: inherit;
+  font-size: 100%;
+  vertical-align: baseline;
+}
+
+html {
+  line-height: 1;
+}
+
+ol, ul {
+  list-style: none;
+}
+
+table {
+  border-collapse: collapse;
+  border-spacing: 0;
+}
+
+caption, th, td {
+  text-align: left;
+  font-weight: normal;
+  vertical-align: middle;
+}
+
+q, blockquote {
+  quotes: none;
+}
+q:before, q:after, blockquote:before, blockquote:after {
+  content: "";
+  content: none;
+}
+
+a img {
+  border: none;
+}
+
+article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section, summary {
+  display: block;
+}
+
+* html {
+  font-size: 93.75%;
+}
+
+html {
+  font-size: 15px;
+  line-height: 1.86667em;
+}
+
+body {
+  background: white;
+  color: #555555;
+  font-family: helvetica, sens-serif;
+}
+
+strong {
+  font-weight: bold;
+}
+
+code {
+  padding: 2px 4px;
+  margin: 0 2px;
+  background: #4be4e5;
+}
+
+a {
+  text-decoration: none;
+  color: #4be4e5;
+}
+a:hover {
+  color: #27dfe0;
+}
+
+h1 {
+  font-weight: bold;
+  font-size: 1.33333em;
+  line-height: 2.1em;
+}
+
+.container {
+  width: 70%;
+  margin: 0 auto;
+  padding: 1.86667em;
+}
+
+.header {
+  height: 450px;
+  background: url("images/header.png") #cbcbcb;
+  position: relative;
+  -webkit-background-size: 1093px 517px;
+  -moz-background-size: 1093px 517px;
+  -o-background-size: 1093px 517px;
+  background-size: 1093px 517px;
+}
+@media screen and (-webkit-min-device-pixel-ratio: 2), screen and (max--moz-device-pixel-ratio: 2) {
+  .header {
+    background-image: url("images/header@2x.png");
+  }
+}
+.header .container {
+  background: #333333;
+  color: white;
+  position: relative;
+  top: 160px;
+}
+.header:after {
+  content: "";
+  display: block;
+  position: absolute;
+  height: 20px;
+  width: 100%;
+  bottom: 0;
+  left: 0;
+  -webkit-box-shadow: inset 0 -10px 15px -8px rgba(0, 0, 0, 0.5);
+  -moz-box-shadow: inset 0 -10px 15px -8px rgba(0, 0, 0, 0.5);
+  box-shadow: inset 0 -10px 15px -8px rgba(0, 0, 0, 0.5);
+}
+
+.main .info {
+  margin-bottom: 1.86667em;
+}
+.main .example img {
+  float: left;
+  height: auto;
+}
+.main .example .comment {
+  opacity: 0.5;
+  font-style: italic;
+}
+.main .example blockquote {
+  margin-left: 215px;
+  text-align: justify;
+}
+
+.footer {
+  text-align: center;
+  background: #3b3b3b;
+  color: #555555;
+  font-size: 0.86667em;
+  line-height: 2.15385em;
+}
+.footer li {
+  display: inline-block;
+  margin: 0 1.86667em;
+}
