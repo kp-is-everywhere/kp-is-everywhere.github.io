@@ -3,7 +3,7 @@ DEBUG                  = false
 MutationObserver       = window.MutationObserver || window.WebKitMutationObserver
 googleKey              = '1TIhYo4RpGu7FGr0XZRIkVVx7E9kUzceXsNI8xPmDG9E'
 public_spreadsheet_url = "https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=#{googleKey}&output=html"
-image_url              = chrome.extension && chrome.extension.getURL('images/kp.jpg') || '../images/kp.jpg'
+image_url              = chrome.extension && chrome.extension.getURL('images/kp.jpg') || 'images/kp.jpg'
 ignoreClass            = /kp-highlight|kp-wrapper|fbDock/
 kp_url                 = (kpid) -> "http://kptaipei.tw/?page_id=#{kpid}"
 
