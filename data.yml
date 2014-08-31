@@ -1,0 +1,16 @@
+site-url: "http://kp-is-everywhere.github.io/"
+site-title: "柯文哲關鍵字小幫手"
+site-name: "柯文哲關鍵字小幫手"
+site-description: "政見太多沒時間看，不知道哪些政見跟你有關嗎？馬上安裝瀏覽器擴充套件 柯文哲關鍵字小幫手，讓你在瀏覽網頁時，輕鬆得到相關資訊！"
+og-type: "website"
+og-url: "http://kp-is-everywhere.github.io/"
+og-image: "http://kp-is-everywhere.github.io/images/fb1200.png"
+fb-admins: "1450988334"
+links: [
+  ['柯P新政', 'http://kptaipei.tw/'],
+  ['柯文哲野生官網', 'http://unlimited.kptaipei.tw/'],
+  ['臺北調，你來定調', 'http://kptaipei.tw/kp-ton/'],
+  ['捐款支持', 'https://donate.kptaipei.tw/'],
+  ['野生柯P記錄團', 'https://www.facebook.com/wildkp']
+]
+footer-text: '&copy; 2014 KPISEVERYWHERE'

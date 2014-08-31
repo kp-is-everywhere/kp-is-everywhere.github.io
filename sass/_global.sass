@@ -1,0 +1,26 @@
+body
+  background: $bg-color
+  color: $text-color
+  font-family: helvetica, sens-serif
+strong
+  font-weight: bold
+a
+  color: $link-color
+pre
+  background: none
+  padding: 15px
+  display: block
+  background: $code-bg-color
+  color: lighten($text-color, 5)
+code
+  padding: 2px 4px
+  margin: 0 2px
+  background: $code-bg-color
+  color: lighten($text-color, 5)
+h1
+  font-weight: bold
+  +adjust-font-size-to(20px, 1.5)
+.btn-primary
+  background: $link-color
+  border: none
+  +transition(background .2s)

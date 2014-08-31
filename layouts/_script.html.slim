@@ -1,0 +1,8 @@
+= livereload_js unless ENV["RACK_ENV"] == "production"
+= javascript_include_tag \
+  '/js/jquery-2.1.1.min.js', \
+  '/js/tabletop.js', \
+  '/js/highlight.js', \
+  '/js/kpkey.js'
+coffee:
+  $('.example').kpkey()

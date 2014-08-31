@@ -1,0 +1,12 @@
+doctype 5
+html lang="zh-TW"
+  head
+    = render 'layouts/head'
+  body
+    #wrapper
+      header.header = render 'layouts/header'
+      .container
+        main.main
+          = yield
+      footer.footer = render 'layouts/footer'
+  = render 'layouts/script'

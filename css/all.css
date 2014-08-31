@@ -92,25 +92,37 @@ code {
   color: #626262;
 }
 
-section + section {
-  margin-top: 1.86667em;
-}
-
 h1 {
   font-weight: bold;
   font-size: 1.33333em;
   line-height: 2.1em;
 }
 
+.btn-primary {
+  background: #55c0cf;
+  border: none;
+  -webkit-transition: background 0.2s;
+  -moz-transition: background 0.2s;
+  -o-transition: background 0.2s;
+  transition: background 0.2s;
+}
+
 .container {
   padding: 1.86667em;
   width: 90%;
+  -webkit-transition: width 0.2s;
+  -moz-transition: width 0.2s;
+  -o-transition: width 0.2s;
+  transition: width 0.2s;
 }
 .container p {
   text-align: justify;
 }
 .container br {
   display: none;
+}
+.container section + section {
+  margin-top: 1.86667em;
 }
 @media (min-width: 801px) {
   .container {

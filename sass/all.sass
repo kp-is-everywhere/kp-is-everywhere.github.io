@@ -1,63 +1,17 @@
-@import 'compass/reset'
-@import 'compass/css3/box-shadow'
-@import 'compass/css3/text-shadow'
-@import 'compass/css3/border-radius'
-@import 'compass/css3/background-size'
-@import 'compass/layout/grid-background'
-@import 'compass/typography/vertical_rhythm'
-
 @import 'mixins'
+@import 'base'
+@import 'global'
 
-$base-font-size: 15px
-$base-line-height: 28px
-$rhythm-unit: 'px'
-
-$grid-background-baseline-height: $base-line-height
-
-+establish-baseline
-
-$bg-color: #fff
-$header-bg-color: #6cd0c4
-$footer-bg-color: #6b8989
-$text-color: #555
-$link-color: #55c0cf
-$code-bg-color: #e6fded
-$link-hover-color: darken($link-color, 8)
-
-body
-  background: $bg-color
-  color: $text-color
-  font-family: helvetica, sens-serif
-strong
-  font-weight: bold
-a
-  color: $link-color
-
-pre
-  background: none
-  padding: 15px
-  display: block
-  background: $code-bg-color
-  color: lighten($text-color, 5)
-
-code
-  padding: 2px 4px
-  margin: 0 2px
-  background: $code-bg-color
-  color: lighten($text-color, 5)
-
-section + section
-  +leader(1)
-h1
-  font-weight: bold
-  +adjust-font-size-to(20px, 1.5)
 .container
   padding: rhythm(1)
   width: 90%
+  +transition(width .2s)
   p
     text-align: justify
   br
     display: none
+  section + section
+    +leader(1)
   +ns
     width: 70%
     br
