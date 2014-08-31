@@ -1,6 +1,5 @@
 @import 'compass/css3/border-radius'
 @import 'compass/css3/box-shadow'
-@import 'compass/css3/box-sizing'
 @import 'compass/css3/transform'
 
 .kp-highlight
@@ -20,18 +19,16 @@
     padding-top: 30px !important
     margin-left: -20px !important
     margin-top: -15px !important
-    +box-sizing(padding-box !important)
     .kp-container
       position: relative !important
       max-width: 100% !important
       display: block !important
       padding: 10px !important
       font-size: 13px !important
-      min-height: 50px !important
+      min-height: 70px !important
       background: #fff
       +border-radius
       +box-shadow( 0 0 3px rgba(#000, .5))
-      +box-sizing(padding-box !important)
       a.kp-title
         width: auto !important
         height: auto !important
@@ -45,6 +42,7 @@
         &:hover
           color: darken(#3496b1, 5)
       img.kp-avatar
+        margin: 0 !important
         width: 50px !important
         height: 50px !important
         float: left !important

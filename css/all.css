@@ -98,7 +98,6 @@ section + section {
 
 h1 {
   font-weight: bold;
-  text-shadow: 0 0 2px rgba(0, 0, 0, 0.3);
   font-size: 1.33333em;
   line-height: 2.1em;
 }

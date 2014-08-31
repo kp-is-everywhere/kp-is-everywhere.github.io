@@ -19,9 +19,6 @@
   padding-top: 30px !important;
   margin-left: -20px !important;
   margin-top: -15px !important;
-  -webkit-box-sizing: padding-box !important;
-  -moz-box-sizing: padding-box !important;
-  box-sizing: padding-box !important;
 }
 .kp-highlight .kp-wrapper .kp-container {
   position: relative !important;
@@ -29,7 +26,7 @@
   display: block !important;
   padding: 10px !important;
   font-size: 13px !important;
-  min-height: 50px !important;
+  min-height: 70px !important;
   background: white;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -39,9 +36,6 @@
   -webkit-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
   -moz-box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
   box-shadow: 0 0 3px rgba(0, 0, 0, 0.5);
-  -webkit-box-sizing: padding-box !important;
-  -moz-box-sizing: padding-box !important;
-  box-sizing: padding-box !important;
 }
 .kp-highlight .kp-wrapper .kp-container a.kp-title {
   width: auto !important;
@@ -58,6 +52,7 @@
   color: #2e859d;
 }
 .kp-highlight .kp-wrapper .kp-container img.kp-avatar {
+  margin: 0 !important;
   width: 50px !important;
   height: 50px !important;
   float: left !important;
