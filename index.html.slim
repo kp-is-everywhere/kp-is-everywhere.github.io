@@ -23,7 +23,7 @@ html lang="zh-TW"
           p
             |
               政見太多沒時間看，不知道哪些政見跟你有關嗎？<br>
-              馬上安裝瀏覽器擴充套件 <a href="#" target="_blank"><strong>柯文哲關鍵字小幫手</strong></a>，讓你在瀏覽網頁時，輕鬆得到相關資訊！
+              馬上安裝瀏覽器擴充套件 <a href="https://chrome.google.com/webstore/detail/moldcnjkjmceelkphffaeoodjknbnfhn?hl=zh-TW&gl=TW" target="_blank"><strong>柯文哲關鍵字小幫手</strong></a>，讓你在瀏覽網頁時，輕鬆得到相關資訊！
       .container
         main.main
           section#intro
@@ -35,7 +35,7 @@ html lang="zh-TW"
             h1 jQuery Plugin
             p.info
               |
-                想放在自己的網站上嗎？ <a href="#" target="_blank"><strong>柯文哲關鍵字小幫手</strong></a> 也準備好了 jQuery Plugin，<br>
+                想放在自己的網站上嗎？ <strong>柯文哲關鍵字小幫手</strong>也準備好了 jQuery Plugin，<br>
                 讓你可以巧妙地放在你的個人網站喔！（明日台北之類的也是相當適用）<br>
                 只要使用<code>$(element).kpkey()</code>就可以了！<br>
                 <br>
@@ -51,7 +51,7 @@ html lang="zh-TW"
             ol
               li
                 h3 下載
-                p kpkey.js 目前相依於 <a href="http://jquery.com" target="_blank">jquery.js</a>, <a href="https://github.com/jsoma/tabletop" target="_blank">tabletop.js</a> 和 <a href="https://github.com/tankchintan/highlight-js" target="_blank">highlight.js</a>，所以請下載這個壓縮檔
+                p kpkey.js 目前相依於 <a href="http://jquery.com" target="_blank">jquery.js</a>, <a href="https://github.com/jsoma/tabletop" target="_blank">tabletop.js</a> 和 <a href="https://github.com/tankchintan/highlight-js" target="_blank">highlight.js</a>，所以請下載這個<a href="files/example.zip">壓縮檔</a>
               li
                 h3 加入 css 到頁面
                 p 放在 <code>&lt;head&gt;&lt;/head&gt;</code> 裡
@@ -59,7 +59,7 @@ html lang="zh-TW"
                   code
                     |
                       &lt;head&gt;
-                        &lt;link href="/css/kp-highlight.css" media="screen" rel="stylesheet" type="text/css" /&gt;
+                        &lt;link href="css/kp-highlight.css" media="screen" rel="stylesheet" type="text/css" /&gt;
                       &lt;/head&gt;
               li
                 h3 加入 js 到頁面
@@ -67,10 +67,10 @@ html lang="zh-TW"
                 pre
                   code
                     |
-                      &lt;script src="/js/jquery-2.1.1.min.js" type="text/javascript"&gt;&lt;/script&gt;
-                      &lt;script src="/js/tabletop.js" type="text/javascript"&gt;&lt;/script&gt;
-                      &lt;script src="/js/highlight.js" type="text/javascript"&gt;&lt;/script&gt;
-                      &lt;script src="/js/kpkey.js" type="text/javascript"&gt;&lt;/script&gt;
+                      &lt;script src="js/jquery-2.1.1.min.js" type="text/javascript"&gt;&lt;/script&gt;
+                      &lt;script src="js/tabletop.js" type="text/javascript"&gt;&lt;/script&gt;
+                      &lt;script src="js/highlight.js" type="text/javascript"&gt;&lt;/script&gt;
+                      &lt;script src="js/kpkey.js" type="text/javascript"&gt;&lt;/script&gt;
                       &lt;script type="text/javascript"&gt;
                           $('.example').kpkey();
                           // .example 是要搜尋的元素，也可以用 $('body') 做全頁搜尋
@@ -90,7 +90,7 @@ html lang="zh-TW"
           p.copyright &copy; 2014 KPISEVERYWHERE
 
 
-  = livereload_js
+  = livereload_js unless ENV["RACK_ENV"] == "production"
   = javascript_include_tag \
     '/js/jquery-2.1.1.min.js', \
     '/js/tabletop.js', \
