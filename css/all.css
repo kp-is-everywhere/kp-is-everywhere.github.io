@@ -73,18 +73,22 @@ strong {
   font-weight: bold;
 }
 
+pre {
+  background: none;
+  padding: 0 5px;
+  display: block;
+  background: #fdf0a3;
+}
+
 code {
   padding: 2px 4px;
   margin: 0 2px;
-  background: #4be4e5;
+  background: #fdf0a3;
+  color: #555555;
 }
 
-a {
-  text-decoration: none;
-  color: #4be4e5;
-}
-a:hover {
-  color: #27dfe0;
+section + section {
+  margin-top: 1.86667em;
 }
 
 h1 {
@@ -95,7 +99,6 @@ h1 {
 
 .container {
   width: 70%;
-  margin: 0 auto;
   padding: 1.86667em;
 }
 
@@ -113,8 +116,11 @@ h1 {
     background-image: url("images/header@2x.png");
   }
 }
+.header a {
+  color: #555555;
+}
 .header .container {
-  background: #333333;
+  background: rgba(0, 156, 163, 0.8);
   color: white;
   position: relative;
   top: 160px;
@@ -132,20 +138,37 @@ h1 {
   box-shadow: inset 0 -10px 15px -8px rgba(0, 0, 0, 0.5);
 }
 
-.main .info {
-  margin-bottom: 1.86667em;
+.main .example {
+  padding: 1.86667em;
+  border: 1px solid #eeeeee;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  -ms-border-radius: 5px;
+  -o-border-radius: 5px;
+  border-radius: 5px;
 }
 .main .example img {
   float: left;
   height: auto;
+  margin-right: 0.93333em;
+  margin-top: 0.37333em;
 }
 .main .example .comment {
   opacity: 0.5;
   font-style: italic;
 }
 .main .example blockquote {
-  margin-left: 215px;
   text-align: justify;
+}
+.main ol {
+  list-style: outside decimal;
+  margin-left: 1.86667em;
+}
+.main ol li {
+  margin-bottom: 1.86667em;
+}
+.main h3 {
+  font-weight: bold;
 }
 
 .footer {

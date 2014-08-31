@@ -19,6 +19,9 @@
   padding-top: 30px !important;
   margin-left: -20px !important;
   margin-top: -15px !important;
+  -webkit-box-sizing: padding-box !important;
+  -moz-box-sizing: padding-box !important;
+  box-sizing: padding-box !important;
 }
 .kp-highlight .kp-wrapper .kp-container {
   position: relative !important;
