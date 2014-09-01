@@ -4,7 +4,7 @@
 
 .container
   padding: rhythm(1)
-  width: 90%
+  width: 95%
   +transition(width .2s)
   p
     text-align: justify
@@ -51,12 +51,15 @@
 
 .main
   .example
-    padding: rhythm(1)
+    padding: rhythm(.5)
     border: 1px solid #eee
     +border-radius()
+    +ns
+      padding: rhythm(1)
     img
       float: left
       height: auto
+      max-width: 100%
       margin-right: rhythm(.5)
       margin-top: rhythm(.2)
     .comment

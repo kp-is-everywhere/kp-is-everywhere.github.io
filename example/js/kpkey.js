@@ -12,7 +12,7 @@
 
   image_url = chrome.extension && chrome.extension.getURL('images/kp.jpg') || 'images/kp.jpg';
 
-  ignoreClass = /kp-highlight|kp-wrapper|fbDock/;
+  ignoreClass = /kp-highlight|kp-wrapper|fbDock|hidden_elem/;
 
   kp_url = function(kpid) {
     return "http://kptaipei.tw/?page_id=" + kpid;
@@ -47,51 +47,76 @@
 
   KpIsEverywhere = (function() {
     function KpIsEverywhere(options) {
-      this.findAll = __bind(this.findAll, this);
+      this._findAllKeywordsInScopes = __bind(this._findAllKeywordsInScopes, this);
+      this.findAllKeywords = __bind(this.findAllKeywords, this);
       this.mousein = __bind(this.mousein, this);
-      this._bindMutation = __bind(this._bindMutation, this);      this.scope = options && options.scope || $('body');
-      this.observe = options && options.scope[0] || document;
-      this.load();
+      var $scope;
+
+      this.prepare();
+      this.body = $('body');
+      $scope = options && options.scope || this.body;
+      this.scopes = [$scope];
+      this.observeTarget = document;
+      this.getKeywords();
       this.bind();
     }
 
-    KpIsEverywhere.prototype.bind = function() {
-      this.scope.on('mouseover', '.kp-highlight', this.mousein);
-      return setTimeout(this._bindMutation, 3000);
-    };
-
-    KpIsEverywhere.prototype._bindMutation = function() {
+    KpIsEverywhere.prototype.prepare = function() {
       /*
         thanks g0v news helper!
         https://github.com/g0v/newshelper-extension
       */
 
-      var config, mutationObserver, target,
-        _this = this;
+      var _this = this;
 
-      target = this.observe;
-      config = {
-        attributes: true,
+      this.mutationConfig = {
+        attributes: false,
+        characterData: false,
         childList: true,
-        characterData: true,
         subtree: true
       };
-      mutationObserver = new MutationObserver(function(mutations) {
-        var hasNewNode, mutation, _i, _len;
+      return this.mutationObserver = new MutationObserver(function(mutations) {
+        var $scope, hasNewNode, mutation, _i, _len;
 
         hasNewNode = false;
         for (_i = 0, _len = mutations.length; _i < _len; _i++) {
           mutation = mutations[_i];
           if (mutation.type === 'childList' && mutation.addedNodes.length > 0 && !(new RegExp(ignoreClass).test(mutation.target.classList))) {
+            $scope = $(mutation.addedNodes);
+            _this.scopes.push($scope);
+            xx("+1");
+            _this.scopeChanged = true;
             hasNewNode = true;
           }
         }
         if (!hasNewNode) {
           return;
         }
-        return throttle(_this.findAll, 1000);
+        return throttle(_this.findAllKeywords, 2000);
       });
-      return mutationObserver.observe(target, config);
+    };
+
+    KpIsEverywhere.prototype.bind = function() {
+      this.body.on('mouseover', '.kp-highlight', this.mousein);
+      return this.observe();
+    };
+
+    KpIsEverywhere.prototype.observe = function() {
+      if (this.observing) {
+        return;
+      }
+      this.mutationObserver.observe(this.observeTarget, this.mutationConfig);
+      this.observing = true;
+      return xx('observing');
+    };
+
+    KpIsEverywhere.prototype.unobserve = function() {
+      if (!this.observing) {
+        return;
+      }
+      this.mutationObserver.disconnect();
+      this.observing = false;
+      return xx('unobserve');
     };
 
     KpIsEverywhere.prototype.mousein = function(e) {
@@ -123,79 +148,82 @@
       return $match.append($html);
     };
 
-    KpIsEverywhere.prototype.load = function() {
+    KpIsEverywhere.prototype.getKeywords = function() {
       var _this = this;
 
+      this.keywords = [];
       return Tabletop.init({
         key: public_spreadsheet_url,
         simpleSheet: true,
         callback: function(rows) {
-          var row, _i, _len;
+          var keyword, keywordObj, keywords, row, _i, _j, _len, _len1;
 
-          _this.rows = [];
           for (_i = 0, _len = rows.length; _i < _len; _i++) {
             row = rows[_i];
             if (!row.keywords) {
               continue;
             }
-            row = {
-              title: row.title.replace(/(^(\D)+\d+-)/, ''),
-              keywords: row.keywords.split('、'),
-              id: row.id
-            };
-            _this.rows.push(row);
+            keywords = row.keywords.split('、');
+            for (_j = 0, _len1 = keywords.length; _j < _len1; _j++) {
+              keyword = keywords[_j];
+              keywordObj = {
+                title: row.title.replace(/(^(\D)+\d+-)/, ''),
+                text: keyword,
+                id: row.id
+              };
+              _this.keywords.push(keywordObj);
+            }
           }
-          return _this.findAll();
+          return _this.findAllKeywords();
         }
       });
     };
 
-    KpIsEverywhere.prototype.findAll = function() {
-      var keyword, row, _i, _len, _ref, _results;
-
-      _ref = this.rows;
-      _results = [];
-      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        row = _ref[_i];
-        _results.push((function() {
-          var _j, _len1, _ref1, _results1;
-
-          _ref1 = row.keywords;
-          _results1 = [];
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            keyword = _ref1[_j];
-            xx("搜尋" + keyword + "中");
-            _results1.push(this._findOne(keyword, row));
-          }
-          return _results1;
-        }).call(this));
-      }
-      return _results;
+    KpIsEverywhere.prototype.findAllKeywords = function() {
+      return this._findAllKeywordsInScopes();
     };
 
-    KpIsEverywhere.prototype._findOne = function(keyword, row) {
-      var html, notFound;
+    KpIsEverywhere.prototype._findAllKeywordsInScopes = function() {
+      var $scope, keyword, _i, _len, _ref;
 
-      html = this.scope.html();
-      if (!html) {
+      $scope = this.scopes.shift();
+      xx("" + this.scopes.length);
+      _ref = this.keywords;
+      for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+        keyword = _ref[_i];
+        this._findOneKeywordInOneScope(keyword, $scope);
+      }
+      if (!this.scopes.length) {
         return;
       }
-      notFound = html.indexOf(keyword) < 0;
+      return setTimeout(this._findAllKeywordsInScopes, 100);
+    };
+
+    KpIsEverywhere.prototype._findOneKeywordInOneScope = function(keyword, $scope) {
+      var notFound, text,
+        _this = this;
+
+      text = $scope.text();
+      if (!text || !keyword) {
+        return;
+      }
+      notFound = text.indexOf(keyword.text) < 0;
       if (notFound) {
-        xx('搜尋結束');
         return;
       }
-      xx("發現關鍵字：" + keyword);
-      return this.scope.highlight(keyword, {
+      this.unobserve();
+      xx("found " + keyword.text);
+      $scope.highlight(keyword.text, {
         classname: 'kp-highlight',
         tag: 'div',
         ignoreClass: ignoreClass
       }, function(div) {
         return $(div).attr({
-          'data-kp-id': row.id,
-          'data-kp-title': row.title
+          'data-kp-id': keyword.id,
+          'data-kp-title': keyword.title
         });
       });
+      return this.observe();
     };
 
     return KpIsEverywhere;
@@ -216,9 +244,5 @@
     });
     return this;
   };
-
-  if (chrome.extension) {
-    window.KpIsEverywhere = KpIsEverywhere;
-  }
 
 }).call(this);

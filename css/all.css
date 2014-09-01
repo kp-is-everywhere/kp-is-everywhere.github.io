@@ -109,7 +109,7 @@ h1 {
 
 .container {
   padding: 1.86667em;
-  width: 90%;
+  width: 95%;
   -webkit-transition: width 0.2s;
   -moz-transition: width 0.2s;
   -o-transition: width 0.2s;
@@ -178,7 +178,7 @@ h1 {
 }
 
 .main .example {
-  padding: 1.86667em;
+  padding: 0.93333em;
   border: 1px solid #eeeeee;
   -webkit-border-radius: 5px;
   -moz-border-radius: 5px;
@@ -186,9 +186,15 @@ h1 {
   -o-border-radius: 5px;
   border-radius: 5px;
 }
+@media (min-width: 801px) {
+  .main .example {
+    padding: 1.86667em;
+  }
+}
 .main .example img {
   float: left;
   height: auto;
+  max-width: 100%;
   margin-right: 0.93333em;
   margin-top: 0.37333em;
 }
