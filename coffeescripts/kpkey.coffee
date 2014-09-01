@@ -1,3 +1,7 @@
+#################################
+# Settings
+#################################
+
 DEBUG                  = false
 # DEBUG                  = true
 MutationObserver       = window.MutationObserver || window.WebKitMutationObserver
@@ -14,6 +18,10 @@ templates = [
   "關於{{keyword}}，我主張 <strong>{{title}}</strong>",
   "說到{{keyword}}，你知道 <strong>{{title}}</strong> 嗎？"
 ]
+
+#################################
+# Functions
+#################################
 
 xx = (t) ->
   DEBUG && console.log t
@@ -32,12 +40,21 @@ render = (title, keyword) ->
     </div>
   """
 
-throttle = (() ->
+throttle = ( ->
   timer_ = null
   return (fn, wait) ->
     clearTimeout(timer_) if timer_
     timer_ = setTimeout(fn, wait)
 )()
+
+requestAnimFrame = ( ->
+  window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || (callback) ->
+    window.setTimeout(callback, 1000 / 60)
+)()
+
+#################################
+# Class
+#################################
 
 class KpIsEverywhere
   constructor: (options) ->
@@ -62,13 +79,13 @@ class KpIsEverywhere
       hasNewNode = false
       for mutation in mutations
         if mutation.type == 'childList' && mutation.addedNodes.length > 0 && !(new RegExp(ignoreClass).test(mutation.target.classList))
-          $scope = $(mutation.addedNodes)
+          @scopeChanged = true
+          hasNewNode    = true
+          $scope        = $(mutation.addedNodes)
           @scopes.push $scope
           xx "+1"
-          @scopeChanged = true
-          hasNewNode = true
       return unless hasNewNode
-      throttle @findAllKeywords, 2000
+      throttle @find, 2000
   bind: ->
     @body.on 'mouseover', '.kp-highlight', @mousein
     @observe()
@@ -96,7 +113,9 @@ class KpIsEverywhere
     id    = $match.data('kp-id')
     $html = $(render(title, $match.text()))
     $html.find('strong').wrap("<a class='kp-title' href='#{kp_url(id)}' target='_blank'>")
+    @unobserve()
     $match.append($html)
+    @observe()
   getKeywords: ->
     @keywords = []
     Tabletop.init
@@ -112,16 +131,14 @@ class KpIsEverywhere
               text: keyword
               id: row.id
             @keywords.push keywordObj
-        @findAllKeywords()
-  findAllKeywords: =>
-    @_findAllKeywordsInScopes()
-  _findAllKeywordsInScopes: =>
+        @find()
+  find: =>
     $scope = @scopes.shift()
     xx "#{@scopes.length}"
     for keyword in @keywords
       @_findOneKeywordInOneScope(keyword, $scope)
     return if !@scopes.length
-    setTimeout(@_findAllKeywordsInScopes, 100)
+    requestAnimFrame @find
   _findOneKeywordInOneScope: (keyword, $scope) ->
     text = $scope.text()
     return if !text || !keyword
@@ -134,6 +151,10 @@ class KpIsEverywhere
         'data-kp-id': keyword.id
         'data-kp-title': keyword.title
     @observe()
+
+#################################
+# Plugin
+#################################
 
 $.fn.kpkey = ->
   $(@).each (i, scope) ->

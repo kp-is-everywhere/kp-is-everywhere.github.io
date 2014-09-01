@@ -1,5 +1,5 @@
 (function() {
-  var DEBUG, KpIsEverywhere, MutationObserver, googleKey, ignoreClass, image_url, kp_url, public_spreadsheet_url, render, templates, throttle, xx,
+  var DEBUG, KpIsEverywhere, MutationObserver, googleKey, ignoreClass, image_url, kp_url, public_spreadsheet_url, render, requestAnimFrame, templates, throttle, xx,
     __bind = function(fn, me){ return function(){ return fn.apply(me, arguments); }; };
 
   DEBUG = false;
@@ -45,10 +45,15 @@
     };
   })();
 
+  requestAnimFrame = (function() {
+    return window.requestAnimationFrame || window.webkitRequestAnimationFrame || window.mozRequestAnimationFrame || window.oRequestAnimationFrame || window.msRequestAnimationFrame || function(callback) {
+      return window.setTimeout(callback, 1000 / 60);
+    };
+  })();
+
   KpIsEverywhere = (function() {
     function KpIsEverywhere(options) {
-      this._findAllKeywordsInScopes = __bind(this._findAllKeywordsInScopes, this);
-      this.findAllKeywords = __bind(this.findAllKeywords, this);
+      this.find = __bind(this.find, this);
       this.mousein = __bind(this.mousein, this);
       var $scope;
 
@@ -82,17 +87,17 @@
         for (_i = 0, _len = mutations.length; _i < _len; _i++) {
           mutation = mutations[_i];
           if (mutation.type === 'childList' && mutation.addedNodes.length > 0 && !(new RegExp(ignoreClass).test(mutation.target.classList))) {
+            _this.scopeChanged = true;
+            hasNewNode = true;
             $scope = $(mutation.addedNodes);
             _this.scopes.push($scope);
             xx("+1");
-            _this.scopeChanged = true;
-            hasNewNode = true;
           }
         }
         if (!hasNewNode) {
           return;
         }
-        return throttle(_this.findAllKeywords, 2000);
+        return throttle(_this.find, 2000);
       });
     };
 
@@ -145,7 +150,9 @@
       id = $match.data('kp-id');
       $html = $(render(title, $match.text()));
       $html.find('strong').wrap("<a class='kp-title' href='" + (kp_url(id)) + "' target='_blank'>");
-      return $match.append($html);
+      this.unobserve();
+      $match.append($html);
+      return this.observe();
     };
 
     KpIsEverywhere.prototype.getKeywords = function() {
@@ -174,16 +181,12 @@
               _this.keywords.push(keywordObj);
             }
           }
-          return _this.findAllKeywords();
+          return _this.find();
         }
       });
     };
 
-    KpIsEverywhere.prototype.findAllKeywords = function() {
-      return this._findAllKeywordsInScopes();
-    };
-
-    KpIsEverywhere.prototype._findAllKeywordsInScopes = function() {
+    KpIsEverywhere.prototype.find = function() {
       var $scope, keyword, _i, _len, _ref;
 
       $scope = this.scopes.shift();
@@ -196,7 +199,7 @@
       if (!this.scopes.length) {
         return;
       }
-      return setTimeout(this._findAllKeywordsInScopes, 100);
+      return requestAnimFrame(this.find);
     };
 
     KpIsEverywhere.prototype._findOneKeywordInOneScope = function(keyword, $scope) {
