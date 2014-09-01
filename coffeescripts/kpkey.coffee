@@ -1,5 +1,5 @@
 DEBUG                  = false
-DEBUG                  = true
+# DEBUG                  = true
 MutationObserver       = window.MutationObserver || window.WebKitMutationObserver
 googleKey              = '1TIhYo4RpGu7FGr0XZRIkVVx7E9kUzceXsNI8xPmDG9E'
 public_spreadsheet_url = "https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=#{googleKey}&output=html"
@@ -41,41 +41,47 @@ throttle = (() ->
 
 class KpIsEverywhere
   constructor: (options) ->
-    @scope = options && options.scope || $('body')
-    @observe = options && options.scope[0] || document
+    @prepare()
+    @body = $('body')
+    $scope = options && options.scope || @body
+    @scopes = [$scope]
+    @observeTarget = document
     @getKeywords()
     @bind()
-  bind: ->
-    @scope.on 'mouseover', '.kp-highlight', @mousein
-    setTimeout(@_bindMutation, 3000)
-  _bindMutation: =>
+  prepare: ->
     ###
       thanks g0v news helper!
       https://github.com/g0v/newshelper-extension
     ###
-    target = @observe
-    config =
+    @mutationConfig =
       attributes: false
       characterData: false
       childList: true
       subtree: true
-
     @mutationObserver = new MutationObserver (mutations) =>
-      @scopes = []
       hasNewNode = false
       for mutation in mutations
         if mutation.type == 'childList' && mutation.addedNodes.length > 0 && !(new RegExp(ignoreClass).test(mutation.target.classList))
-          # $addedTarget = $(mutation.target)
-          $addedPrev = $(mutation.previousSibling)
-          # @scopes.push $addedTarget
-          @scopes.push $addedPrev
+          $scope = $(mutation.addedNodes)
+          @scopes.push $scope
+          xx "+1"
+          @scopeChanged = true
           hasNewNode = true
       return unless hasNewNode
-      @scopeChanged = true
-      throttle @findAllKeywords, 1000
-
-    @mutationObserver.observe(target, config)
-    # TODO: stop observe when idle, restart on scroll or click?
+      throttle @findAllKeywords, 2000
+  bind: ->
+    @body.on 'mouseover', '.kp-highlight', @mousein
+    @observe()
+  observe: ->
+    return if @observing
+    @mutationObserver.observe @observeTarget, @mutationConfig
+    @observing = true
+    xx 'observing'
+  unobserve: ->
+    return if !@observing
+    @mutationObserver.disconnect()
+    @observing = false
+    xx 'unobserve'
   mousein: (e) =>
     $match = $(e.currentTarget)
     @_addLink($match) if !$match.data('kp-link-enabled')
@@ -92,42 +98,42 @@ class KpIsEverywhere
     $html.find('strong').wrap("<a class='kp-title' href='#{kp_url(id)}' target='_blank'>")
     $match.append($html)
   getKeywords: ->
+    @keywords = []
     Tabletop.init
       key: public_spreadsheet_url,
       simpleSheet: true
       callback: (rows) =>
-        @rows = []
         for row in rows
           continue if !row.keywords
-          row =
-            title: row.title.replace(/(^(\D)+\d+-)/, '')
-            keywords: row.keywords.split('、')
-            id: row.id
-          @rows.push row
-          # TODO: flatten keywords information
+          keywords = row.keywords.split('、')
+          for keyword in keywords
+            keywordObj =
+              title: row.title.replace(/(^(\D)+\d+-)/, '')
+              text: keyword
+              id: row.id
+            @keywords.push keywordObj
         @findAllKeywords()
   findAllKeywords: =>
-    for row in @rows
-      for keyword in row.keywords
-        @_findOneKeyword keyword, row
-  _findOneKeyword: (keyword, row) ->
-    if @scopes?
-      for $scope in @scopes
-        @_findOneKeywordInScope keyword, row, $scope.next()
-      @scopes = null
-      # TODO: loop recursive instead of iterative => @addNodes.shift()
-    else
-      @_findOneKeywordInScope keyword, row, @scope
-  _findOneKeywordInScope: (keyword, row, scope) ->
-    html = scope.html()
-    return if !html
-    notFound = html.indexOf(keyword) < 0
-    if notFound
-      return
-    scope.highlight keyword, {classname: 'kp-highlight', tag: 'div', ignoreClass: ignoreClass }, (div) ->
+    @_findAllKeywordsInScopes()
+  _findAllKeywordsInScopes: =>
+    $scope = @scopes.shift()
+    xx "#{@scopes.length}"
+    for keyword in @keywords
+      @_findOneKeywordInOneScope(keyword, $scope)
+    return if !@scopes.length
+    setTimeout(@_findAllKeywordsInScopes, 100)
+  _findOneKeywordInOneScope: (keyword, $scope) ->
+    text = $scope.text()
+    return if !text || !keyword
+    notFound = text.indexOf(keyword.text) < 0
+    return if notFound
+    @unobserve()
+    xx "found #{keyword.text}"
+    $scope.highlight keyword.text, {classname: 'kp-highlight', tag: 'div', ignoreClass: ignoreClass }, (div) =>
       $(div).attr
-        'data-kp-id': row.id
-        'data-kp-title': row.title
+        'data-kp-id': keyword.id
+        'data-kp-title': keyword.title
+    @observe()
 
 $.fn.kpkey = ->
   $(@).each (i, scope) ->

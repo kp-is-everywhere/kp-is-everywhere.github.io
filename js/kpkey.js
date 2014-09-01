@@ -4,8 +4,6 @@
 
   DEBUG = false;
 
-  DEBUG = true;
-
   MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
   googleKey = '1TIhYo4RpGu7FGr0XZRIkVVx7E9kUzceXsNI8xPmDG9E';
@@ -49,55 +47,76 @@
 
   KpIsEverywhere = (function() {
     function KpIsEverywhere(options) {
+      this._findAllKeywordsInScopes = __bind(this._findAllKeywordsInScopes, this);
       this.findAllKeywords = __bind(this.findAllKeywords, this);
       this.mousein = __bind(this.mousein, this);
-      this._bindMutation = __bind(this._bindMutation, this);      this.scope = options && options.scope || $('body');
-      this.observe = options && options.scope[0] || document;
+      var $scope;
+
+      this.prepare();
+      this.body = $('body');
+      $scope = options && options.scope || this.body;
+      this.scopes = [$scope];
+      this.observeTarget = document;
       this.getKeywords();
       this.bind();
     }
 
-    KpIsEverywhere.prototype.bind = function() {
-      this.scope.on('mouseover', '.kp-highlight', this.mousein);
-      return setTimeout(this._bindMutation, 3000);
-    };
-
-    KpIsEverywhere.prototype._bindMutation = function() {
+    KpIsEverywhere.prototype.prepare = function() {
       /*
         thanks g0v news helper!
         https://github.com/g0v/newshelper-extension
       */
 
-      var config, target,
-        _this = this;
+      var _this = this;
 
-      target = this.observe;
-      config = {
+      this.mutationConfig = {
         attributes: false,
         characterData: false,
         childList: true,
         subtree: true
       };
-      this.mutationObserver = new MutationObserver(function(mutations) {
-        var $addedPrev, hasNewNode, mutation, _i, _len;
+      return this.mutationObserver = new MutationObserver(function(mutations) {
+        var $scope, hasNewNode, mutation, _i, _len;
 
-        _this.scopes = [];
         hasNewNode = false;
         for (_i = 0, _len = mutations.length; _i < _len; _i++) {
           mutation = mutations[_i];
           if (mutation.type === 'childList' && mutation.addedNodes.length > 0 && !(new RegExp(ignoreClass).test(mutation.target.classList))) {
-            $addedPrev = $(mutation.previousSibling);
-            _this.scopes.push($addedPrev);
+            $scope = $(mutation.addedNodes);
+            _this.scopes.push($scope);
+            xx("+1");
+            _this.scopeChanged = true;
             hasNewNode = true;
           }
         }
         if (!hasNewNode) {
           return;
         }
-        _this.scopeChanged = true;
-        return throttle(_this.findAllKeywords, 1000);
+        return throttle(_this.findAllKeywords, 2000);
       });
-      return this.mutationObserver.observe(target, config);
+    };
+
+    KpIsEverywhere.prototype.bind = function() {
+      this.body.on('mouseover', '.kp-highlight', this.mousein);
+      return this.observe();
+    };
+
+    KpIsEverywhere.prototype.observe = function() {
+      if (this.observing) {
+        return;
+      }
+      this.mutationObserver.observe(this.observeTarget, this.mutationConfig);
+      this.observing = true;
+      return xx('observing');
+    };
+
+    KpIsEverywhere.prototype.unobserve = function() {
+      if (!this.observing) {
+        return;
+      }
+      this.mutationObserver.disconnect();
+      this.observing = false;
+      return xx('unobserve');
     };
 
     KpIsEverywhere.prototype.mousein = function(e) {
@@ -132,24 +151,28 @@
     KpIsEverywhere.prototype.getKeywords = function() {
       var _this = this;
 
+      this.keywords = [];
       return Tabletop.init({
         key: public_spreadsheet_url,
         simpleSheet: true,
         callback: function(rows) {
-          var row, _i, _len;
+          var keyword, keywordObj, keywords, row, _i, _j, _len, _len1;
 
-          _this.rows = [];
           for (_i = 0, _len = rows.length; _i < _len; _i++) {
             row = rows[_i];
             if (!row.keywords) {
               continue;
             }
-            row = {
-              title: row.title.replace(/(^(\D)+\d+-)/, ''),
-              keywords: row.keywords.split('、'),
-              id: row.id
-            };
-            _this.rows.push(row);
+            keywords = row.keywords.split('、');
+            for (_j = 0, _len1 = keywords.length; _j < _len1; _j++) {
+              keyword = keywords[_j];
+              keywordObj = {
+                title: row.title.replace(/(^(\D)+\d+-)/, ''),
+                text: keyword,
+                id: row.id
+              };
+              _this.keywords.push(keywordObj);
+            }
           }
           return _this.findAllKeywords();
         }
@@ -157,63 +180,50 @@
     };
 
     KpIsEverywhere.prototype.findAllKeywords = function() {
-      var keyword, row, _i, _len, _ref, _results;
+      return this._findAllKeywordsInScopes();
+    };
 
-      _ref = this.rows;
-      _results = [];
+    KpIsEverywhere.prototype._findAllKeywordsInScopes = function() {
+      var $scope, keyword, _i, _len, _ref;
+
+      $scope = this.scopes.shift();
+      xx("" + this.scopes.length);
+      _ref = this.keywords;
       for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-        row = _ref[_i];
-        _results.push((function() {
-          var _j, _len1, _ref1, _results1;
-
-          _ref1 = row.keywords;
-          _results1 = [];
-          for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
-            keyword = _ref1[_j];
-            _results1.push(this._findOneKeyword(keyword, row));
-          }
-          return _results1;
-        }).call(this));
+        keyword = _ref[_i];
+        this._findOneKeywordInOneScope(keyword, $scope);
       }
-      return _results;
-    };
-
-    KpIsEverywhere.prototype._findOneKeyword = function(keyword, row) {
-      var $scope, _i, _len, _ref;
-
-      if (this.scopes != null) {
-        _ref = this.scopes;
-        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
-          $scope = _ref[_i];
-          this._findOneKeywordInScope(keyword, row, $scope.next());
-        }
-        return this.scopes = null;
-      } else {
-        return this._findOneKeywordInScope(keyword, row, this.scope);
-      }
-    };
-
-    KpIsEverywhere.prototype._findOneKeywordInScope = function(keyword, row, scope) {
-      var html, notFound;
-
-      html = scope.html();
-      if (!html) {
+      if (!this.scopes.length) {
         return;
       }
-      notFound = html.indexOf(keyword) < 0;
+      return setTimeout(this._findAllKeywordsInScopes, 100);
+    };
+
+    KpIsEverywhere.prototype._findOneKeywordInOneScope = function(keyword, $scope) {
+      var notFound, text,
+        _this = this;
+
+      text = $scope.text();
+      if (!text || !keyword) {
+        return;
+      }
+      notFound = text.indexOf(keyword.text) < 0;
       if (notFound) {
         return;
       }
-      return scope.highlight(keyword, {
+      this.unobserve();
+      xx("found " + keyword.text);
+      $scope.highlight(keyword.text, {
         classname: 'kp-highlight',
         tag: 'div',
         ignoreClass: ignoreClass
       }, function(div) {
         return $(div).attr({
-          'data-kp-id': row.id,
-          'data-kp-title': row.title
+          'data-kp-id': keyword.id,
+          'data-kp-title': keyword.title
         });
       });
+      return this.observe();
     };
 
     return KpIsEverywhere;
