@@ -4,6 +4,8 @@
 
   DEBUG = false;
 
+  DEBUG = true;
+
   MutationObserver = window.MutationObserver || window.WebKitMutationObserver;
 
   googleKey = '1TIhYo4RpGu7FGr0XZRIkVVx7E9kUzceXsNI8xPmDG9E';
@@ -12,7 +14,7 @@
 
   image_url = chrome.extension && chrome.extension.getURL('images/kp.jpg') || 'images/kp.jpg';
 
-  ignoreClass = /kp-highlight|kp-wrapper|fbDock/;
+  ignoreClass = /kp-highlight|kp-wrapper|fbDock|hidden_elem/;
 
   kp_url = function(kpid) {
     return "http://kptaipei.tw/?page_id=" + kpid;
@@ -47,11 +49,11 @@
 
   KpIsEverywhere = (function() {
     function KpIsEverywhere(options) {
-      this.findAll = __bind(this.findAll, this);
+      this.findAllKeywords = __bind(this.findAllKeywords, this);
       this.mousein = __bind(this.mousein, this);
       this._bindMutation = __bind(this._bindMutation, this);      this.scope = options && options.scope || $('body');
       this.observe = options && options.scope[0] || document;
-      this.load();
+      this.getKeywords();
       this.bind();
     }
 
@@ -66,32 +68,36 @@
         https://github.com/g0v/newshelper-extension
       */
 
-      var config, mutationObserver, target,
+      var config, target,
         _this = this;
 
       target = this.observe;
       config = {
-        attributes: true,
+        attributes: false,
+        characterData: false,
         childList: true,
-        characterData: true,
         subtree: true
       };
-      mutationObserver = new MutationObserver(function(mutations) {
-        var hasNewNode, mutation, _i, _len;
+      this.mutationObserver = new MutationObserver(function(mutations) {
+        var $addedPrev, hasNewNode, mutation, _i, _len;
 
+        _this.scopes = [];
         hasNewNode = false;
         for (_i = 0, _len = mutations.length; _i < _len; _i++) {
           mutation = mutations[_i];
           if (mutation.type === 'childList' && mutation.addedNodes.length > 0 && !(new RegExp(ignoreClass).test(mutation.target.classList))) {
+            $addedPrev = $(mutation.previousSibling);
+            _this.scopes.push($addedPrev);
             hasNewNode = true;
           }
         }
         if (!hasNewNode) {
           return;
         }
-        return throttle(_this.findAll, 1000);
+        _this.scopeChanged = true;
+        return throttle(_this.findAllKeywords, 1000);
       });
-      return mutationObserver.observe(target, config);
+      return this.mutationObserver.observe(target, config);
     };
 
     KpIsEverywhere.prototype.mousein = function(e) {
@@ -123,7 +129,7 @@
       return $match.append($html);
     };
 
-    KpIsEverywhere.prototype.load = function() {
+    KpIsEverywhere.prototype.getKeywords = function() {
       var _this = this;
 
       return Tabletop.init({
@@ -145,12 +151,12 @@
             };
             _this.rows.push(row);
           }
-          return _this.findAll();
+          return _this.findAllKeywords();
         }
       });
     };
 
-    KpIsEverywhere.prototype.findAll = function() {
+    KpIsEverywhere.prototype.findAllKeywords = function() {
       var keyword, row, _i, _len, _ref, _results;
 
       _ref = this.rows;
@@ -164,8 +170,7 @@
           _results1 = [];
           for (_j = 0, _len1 = _ref1.length; _j < _len1; _j++) {
             keyword = _ref1[_j];
-            xx("搜尋" + keyword + "中");
-            _results1.push(this._findOne(keyword, row));
+            _results1.push(this._findOneKeyword(keyword, row));
           }
           return _results1;
         }).call(this));
@@ -173,20 +178,33 @@
       return _results;
     };
 
-    KpIsEverywhere.prototype._findOne = function(keyword, row) {
+    KpIsEverywhere.prototype._findOneKeyword = function(keyword, row) {
+      var $scope, _i, _len, _ref;
+
+      if (this.scopes != null) {
+        _ref = this.scopes;
+        for (_i = 0, _len = _ref.length; _i < _len; _i++) {
+          $scope = _ref[_i];
+          this._findOneKeywordInScope(keyword, row, $scope.next());
+        }
+        return this.scopes = null;
+      } else {
+        return this._findOneKeywordInScope(keyword, row, this.scope);
+      }
+    };
+
+    KpIsEverywhere.prototype._findOneKeywordInScope = function(keyword, row, scope) {
       var html, notFound;
 
-      html = this.scope.html();
+      html = scope.html();
       if (!html) {
         return;
       }
       notFound = html.indexOf(keyword) < 0;
       if (notFound) {
-        xx('搜尋結束');
         return;
       }
-      xx("發現關鍵字：" + keyword);
-      return this.scope.highlight(keyword, {
+      return scope.highlight(keyword, {
         classname: 'kp-highlight',
         tag: 'div',
         ignoreClass: ignoreClass
@@ -216,9 +234,5 @@
     });
     return this;
   };
-
-  if (chrome.extension) {
-    window.KpIsEverywhere = KpIsEverywhere;
-  }
 
 }).call(this);

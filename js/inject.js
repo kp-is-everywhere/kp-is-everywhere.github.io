@@ -12,7 +12,7 @@
         if (new RegExp(blocklist).test(window.location.host)) {
           return;
         }
-        return new KpIsEverywhere();
+        return $('html').kpkey();
       }
     }, 500);
   });

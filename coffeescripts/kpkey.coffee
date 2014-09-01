@@ -1,10 +1,10 @@
 DEBUG                  = false
-# DEBUG                  = true
+DEBUG                  = true
 MutationObserver       = window.MutationObserver || window.WebKitMutationObserver
 googleKey              = '1TIhYo4RpGu7FGr0XZRIkVVx7E9kUzceXsNI8xPmDG9E'
 public_spreadsheet_url = "https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=#{googleKey}&output=html"
 image_url              = chrome.extension && chrome.extension.getURL('images/kp.jpg') || 'images/kp.jpg'
-ignoreClass            = /kp-highlight|kp-wrapper|fbDock/
+ignoreClass            = /kp-highlight|kp-wrapper|fbDock|hidden_elem/
 kp_url                 = (kpid) -> "http://kptaipei.tw/?page_id=#{kpid}"
 
 templates = [
@@ -43,7 +43,7 @@ class KpIsEverywhere
   constructor: (options) ->
     @scope = options && options.scope || $('body')
     @observe = options && options.scope[0] || document
-    @load()
+    @getKeywords()
     @bind()
   bind: ->
     @scope.on 'mouseover', '.kp-highlight', @mousein
@@ -55,21 +55,27 @@ class KpIsEverywhere
     ###
     target = @observe
     config =
-      attributes: true
+      attributes: false
+      characterData: false
       childList: true
-      characterData: true
       subtree: true
 
-    mutationObserver = new MutationObserver (mutations) =>
+    @mutationObserver = new MutationObserver (mutations) =>
+      @scopes = []
       hasNewNode = false
       for mutation in mutations
         if mutation.type == 'childList' && mutation.addedNodes.length > 0 && !(new RegExp(ignoreClass).test(mutation.target.classList))
+          # $addedTarget = $(mutation.target)
+          $addedPrev = $(mutation.previousSibling)
+          # @scopes.push $addedTarget
+          @scopes.push $addedPrev
           hasNewNode = true
-
       return unless hasNewNode
-      throttle @findAll, 1000
+      @scopeChanged = true
+      throttle @findAllKeywords, 1000
 
-    mutationObserver.observe(target, config)
+    @mutationObserver.observe(target, config)
+    # TODO: stop observe when idle, restart on scroll or click?
   mousein: (e) =>
     $match = $(e.currentTarget)
     @_addLink($match) if !$match.data('kp-link-enabled')
@@ -85,7 +91,7 @@ class KpIsEverywhere
     $html = $(render(title, $match.text()))
     $html.find('strong').wrap("<a class='kp-title' href='#{kp_url(id)}' target='_blank'>")
     $match.append($html)
-  load: ->
+  getKeywords: ->
     Tabletop.init
       key: public_spreadsheet_url,
       simpleSheet: true
@@ -98,21 +104,27 @@ class KpIsEverywhere
             keywords: row.keywords.split('、')
             id: row.id
           @rows.push row
-        @findAll()
-  findAll: =>
+          # TODO: flatten keywords information
+        @findAllKeywords()
+  findAllKeywords: =>
     for row in @rows
       for keyword in row.keywords
-        xx "搜尋#{keyword}中"
-        @_findOne keyword, row
-  _findOne: (keyword, row) ->
-    html = @scope.html()
+        @_findOneKeyword keyword, row
+  _findOneKeyword: (keyword, row) ->
+    if @scopes?
+      for $scope in @scopes
+        @_findOneKeywordInScope keyword, row, $scope.next()
+      @scopes = null
+      # TODO: loop recursive instead of iterative => @addNodes.shift()
+    else
+      @_findOneKeywordInScope keyword, row, @scope
+  _findOneKeywordInScope: (keyword, row, scope) ->
+    html = scope.html()
     return if !html
     notFound = html.indexOf(keyword) < 0
     if notFound
-      xx '搜尋結束'
       return
-    xx "發現關鍵字：#{keyword}"
-    @scope.highlight keyword, {classname: 'kp-highlight', tag: 'div', ignoreClass: ignoreClass }, (div) ->
+    scope.highlight keyword, {classname: 'kp-highlight', tag: 'div', ignoreClass: ignoreClass }, (div) ->
       $(div).attr
         'data-kp-id': row.id
         'data-kp-title': row.title
@@ -124,5 +136,3 @@ $.fn.kpkey = ->
       kpkey = new KpIsEverywhere({ scope: $scope })
       $scope.data('kpkey', kpkey)
   @
-
-window.KpIsEverywhere = KpIsEverywhere if chrome.extension

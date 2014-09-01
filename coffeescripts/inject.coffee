@@ -4,5 +4,5 @@ chrome.extension.sendMessage {}, (response) ->
     if document.readyState == "complete"
       clearInterval(readyStateCheckInterval)
       return if (new RegExp(blocklist).test(window.location.host))
-      new KpIsEverywhere()
+      $('html').kpkey()
   , 500
