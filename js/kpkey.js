@@ -10,7 +10,7 @@
 
   public_spreadsheet_url = "https://docs.google.com/spreadsheet/pub?hl=en_US&hl=en_US&key=" + googleKey + "&output=html";
 
-  image_url = chrome.extension && chrome.extension.getURL('images/kp.jpg') || 'images/kp.jpg';
+  image_url = (typeof chrome !== "undefined" && chrome !== null) && chrome.extension && chrome.extension.getURL('images/kp.jpg') || 'images/kp.jpg';
 
   ignoreClass = /kp-highlight|kp-wrapper|fbDock|hidden_elem/;
 
